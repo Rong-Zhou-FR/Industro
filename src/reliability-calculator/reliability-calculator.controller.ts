@@ -129,6 +129,46 @@ export class ReliabilityCalculatorController {
       height: 400px;
       margin-top: 30px;
     }
+    .chart-options {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+    .chart-options h3 {
+      margin-bottom: 15px;
+      color: #667eea;
+    }
+    .scale-toggle {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .scale-toggle label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+    .range-inputs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .range-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .range-group label {
+      font-size: 0.9em;
+      margin-bottom: 0;
+    }
+    .range-group input {
+      padding: 8px;
+      font-size: 0.9em;
+    }
     .error {
       background: #f8d7da;
       color: #721c24;
@@ -203,6 +243,42 @@ export class ReliabilityCalculatorController {
     <div class="results" id="results">
       <h2>Results</h2>
       <div id="resultContent"></div>
+      
+      <div class="chart-options">
+        <h3>Graph Options</h3>
+        <div class="scale-toggle">
+          <label>
+            <input type="radio" name="scale" value="linear" checked onchange="updateChart()">
+            Linear Scale
+          </label>
+          <label>
+            <input type="radio" name="scale" value="logarithmic" onchange="updateChart()">
+            Logarithmic Scale
+          </label>
+        </div>
+        
+        <h4 style="margin-top: 15px; margin-bottom: 10px; font-size: 1em;">Adjust Visible Region:</h4>
+        <div class="range-inputs">
+          <div class="range-group">
+            <label for="t_start">Time Start (t_start):</label>
+            <input type="number" id="t_start" step="0.01" placeholder="Auto" onchange="updateChart()">
+          </div>
+          <div class="range-group">
+            <label for="t_end">Time End (t_end):</label>
+            <input type="number" id="t_end" step="0.01" placeholder="Auto" onchange="updateChart()">
+          </div>
+          <div class="range-group">
+            <label for="R_visible_start">Reliability Start (R_visible_start):</label>
+            <input type="number" id="R_visible_start" min="0" max="1" step="0.001" placeholder="Auto" onchange="updateChart()">
+          </div>
+          <div class="range-group">
+            <label for="R_visible_end">Reliability End (R_visible_end):</label>
+            <input type="number" id="R_visible_end" min="0" max="1" step="0.001" placeholder="Auto" onchange="updateChart()">
+          </div>
+        </div>
+        <button class="btn" style="margin-top: 15px;" onclick="resetChartOptions()">Reset Graph Options</button>
+      </div>
+      
       <div class="chart-container">
         <canvas id="chart"></canvas>
       </div>
@@ -302,7 +378,29 @@ export class ReliabilityCalculatorController {
       
       document.getElementById('results').classList.add('show');
 
+      // Reset chart options to defaults
+      resetChartOptions();
       renderChart(result);
+    }
+
+    function updateChart() {
+      if (!currentResult) return;
+      renderChart(currentResult);
+    }
+
+    function resetChartOptions() {
+      // Reset scale to linear by default
+      document.querySelector('input[name="scale"][value="linear"]').checked = true;
+      
+      // Clear custom range inputs
+      document.getElementById('t_start').value = '';
+      document.getElementById('t_end').value = '';
+      document.getElementById('R_visible_start').value = '';
+      document.getElementById('R_visible_end').value = '';
+      
+      if (currentResult) {
+        updateChart();
+      }
     }
 
     function renderChart(result) {
@@ -312,8 +410,19 @@ export class ReliabilityCalculatorController {
         chart.destroy();
       }
 
+      // Get user-selected scale type
+      const scaleType = document.querySelector('input[name="scale"]:checked').value;
+      
+      // Get custom range values
+      const t_start = parseFloat(document.getElementById('t_start').value);
+      const t_end = parseFloat(document.getElementById('t_end').value);
+      const R_visible_start = parseFloat(document.getElementById('R_visible_start').value);
+      const R_visible_end = parseFloat(document.getElementById('R_visible_end').value);
+
       // Use logarithmic scale for exponential model to show exponential nature better
-      const yAxisConfig = result.model === 'exponential' ? {
+      const useLogScale = scaleType === 'logarithmic';
+      
+      const yAxisConfig = useLogScale ? {
         type: 'logarithmic',
         display: true,
         title: {
@@ -321,8 +430,8 @@ export class ReliabilityCalculatorController {
           text: 'Reliability R(t) (log scale)',
           font: { size: 14 }
         },
-        min: 0.001,
-        max: 1,
+        min: !isNaN(R_visible_start) ? Math.max(0.001, R_visible_start) : 0.001,
+        max: !isNaN(R_visible_end) ? R_visible_end : 1,
         ticks: {
           callback: function(value, index, values) {
             if (value === 1 || value === 0.1 || value === 0.01 || value === 0.001) {
@@ -338,8 +447,19 @@ export class ReliabilityCalculatorController {
           text: 'Reliability R(t)',
           font: { size: 14 }
         },
-        min: 0,
-        max: 1.1
+        min: !isNaN(R_visible_start) ? R_visible_start : 0,
+        max: !isNaN(R_visible_end) ? R_visible_end : 1.1
+      };
+
+      const xAxisConfig = {
+        display: true,
+        title: {
+          display: true,
+          text: 'Time (t)',
+          font: { size: 14 }
+        },
+        min: !isNaN(t_start) ? t_start : undefined,
+        max: !isNaN(t_end) ? t_end : undefined
       };
 
       chart = new Chart(ctx, {
@@ -361,7 +481,7 @@ export class ReliabilityCalculatorController {
           plugins: {
             title: {
               display: true,
-              text: \`Reliability Function (\${result.model === 'exponential' ? 'Logarithmic Scale' : 'Linear Scale'})\`,
+              text: \`Reliability Function (\${useLogScale ? 'Logarithmic Scale' : 'Linear Scale'})\`,
               font: { size: 16 }
             },
             legend: {
@@ -370,14 +490,7 @@ export class ReliabilityCalculatorController {
             }
           },
           scales: {
-            x: {
-              display: true,
-              title: {
-                display: true,
-                text: 'Time (t)',
-                font: { size: 14 }
-              }
-            },
+            x: xAxisConfig,
             y: yAxisConfig
           }
         }
