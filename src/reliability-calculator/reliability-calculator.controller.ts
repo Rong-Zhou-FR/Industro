@@ -17,6 +17,9 @@ export class ReliabilityCalculatorController {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reliability Calculator - Industrial Engineering Tools</title>
   <script src="/js/chart.umd.js"></script>
+  <link rel="stylesheet" href="/js/katex.min.css">
+  <script src="/js/katex.min.js"></script>
+  <script src="/js/auto-render.min.js"></script>
   <style>
     * {
       margin: 0;
@@ -148,6 +151,13 @@ export class ReliabilityCalculatorController {
       background: #fff3cd;
       border-radius: 10px;
     }
+    .equation-display {
+      font-size: 1.2em;
+      padding: 10px;
+      background: #f0f0f0;
+      border-radius: 5px;
+      margin: 10px 0;
+    }
   </style>
 </head>
 <body>
@@ -163,8 +173,8 @@ export class ReliabilityCalculatorController {
         <div class="form-group">
           <label for="model">Model Selection:</label>
           <select id="model">
-            <option value="exponential">Exponential: R(t) = e^(-λt)</option>
-            <option value="linear">Linear: R(t) = at + 1</option>
+            <option value="exponential">Exponential Model</option>
+            <option value="linear">Linear Model</option>
           </select>
         </div>
         <div class="form-group">
@@ -247,14 +257,15 @@ export class ReliabilityCalculatorController {
           <span class="result-label">Model:</span> \${result.model.charAt(0).toUpperCase() + result.model.slice(1)}
         </div>
         <div class="result-item">
-          <span class="result-label">Equation:</span> \${result.equation}
+          <span class="result-label">Equation:</span>
+          <div class="equation-display" id="equation-display"></div>
         </div>
       \`;
 
       if (result.lambda !== undefined) {
         html += \`
           <div class="result-item">
-            <span class="result-label">Failure Rate (λ):</span> \${result.lambda}
+            <span class="result-label">Failure Rate (λ):</span> \${result.lambda.toExponential(6)}
           </div>
         \`;
       }
@@ -262,18 +273,33 @@ export class ReliabilityCalculatorController {
       if (result.a !== undefined) {
         html += \`
           <div class="result-item">
-            <span class="result-label">Slope (a):</span> \${result.a}
+            <span class="result-label">Slope (a):</span> \${result.a.toExponential(6)}
           </div>
         \`;
       }
 
       html += \`
         <div class="result-item">
-          <span class="result-label">Reliability at verification time:</span> \${result.reliability}
+          <span class="result-label">Reliability at verification time:</span> \${result.reliability.toFixed(8)}
         </div>
       \`;
 
       content.innerHTML = html;
+      
+      // Render equation with KaTeX
+      const equationElement = document.getElementById('equation-display');
+      if (result.model === 'exponential') {
+        katex.render(\`R(t) = e^{-\\\\lambda t} = e^{-\${result.lambda.toExponential(6)} \\\\cdot t}\`, equationElement, {
+          throwOnError: false,
+          displayMode: true
+        });
+      } else {
+        katex.render(\`R(t) = at + 1 = \${result.a.toExponential(6)} \\\\cdot t + 1\`, equationElement, {
+          throwOnError: false,
+          displayMode: true
+        });
+      }
+      
       document.getElementById('results').classList.add('show');
 
       renderChart(result);
@@ -285,6 +311,36 @@ export class ReliabilityCalculatorController {
       if (chart) {
         chart.destroy();
       }
+
+      // Use logarithmic scale for exponential model to show exponential nature better
+      const yAxisConfig = result.model === 'exponential' ? {
+        type: 'logarithmic',
+        display: true,
+        title: {
+          display: true,
+          text: 'Reliability R(t) (log scale)',
+          font: { size: 14 }
+        },
+        min: 0.001,
+        max: 1,
+        ticks: {
+          callback: function(value, index, values) {
+            if (value === 1 || value === 0.1 || value === 0.01 || value === 0.001) {
+              return value.toFixed(3);
+            }
+            return null;
+          }
+        }
+      } : {
+        display: true,
+        title: {
+          display: true,
+          text: 'Reliability R(t)',
+          font: { size: 14 }
+        },
+        min: 0,
+        max: 1.1
+      };
 
       chart = new Chart(ctx, {
         type: 'line',
@@ -305,7 +361,7 @@ export class ReliabilityCalculatorController {
           plugins: {
             title: {
               display: true,
-              text: \`Reliability Function: \${result.equation}\`,
+              text: \`Reliability Function (\${result.model === 'exponential' ? 'Logarithmic Scale' : 'Linear Scale'})\`,
               font: { size: 16 }
             },
             legend: {
@@ -322,16 +378,7 @@ export class ReliabilityCalculatorController {
                 font: { size: 14 }
               }
             },
-            y: {
-              display: true,
-              title: {
-                display: true,
-                text: 'Reliability R(t)',
-                font: { size: 14 }
-              },
-              min: 0,
-              max: 1.1
-            }
+            y: yAxisConfig
           }
         }
       });
@@ -496,14 +543,14 @@ export class ReliabilityCalculatorController {
     doc.fontSize(12).text(`Equation: ${data.result.equation}`);
     
     if (data.result.lambda !== undefined) {
-      doc.text(`Failure Rate (λ): ${data.result.lambda}`);
+      doc.text(`Failure Rate (λ): ${data.result.lambda.toExponential(6)}`);
     }
     
     if (data.result.a !== undefined) {
-      doc.text(`Slope (a): ${data.result.a}`);
+      doc.text(`Slope (a): ${data.result.a.toExponential(6)}`);
     }
     
-    doc.text(`Reliability at verification time: ${data.result.reliability}`);
+    doc.text(`Reliability at verification time: ${data.result.reliability.toFixed(8)}`);
     doc.moveDown();
 
     doc.fontSize(12).text('Author: Rong ZHOU', { align: 'center' });
