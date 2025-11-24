@@ -65,7 +65,11 @@
             <div class="warning-content">
                 <div class="danger-box">
                     <h3>🚨 Danger</h3>
-                    <textarea id="danger" class="form-control markdown-support" rows="8" placeholder="Décrire les dangers identifiés...&#10;&#10;Exemple (markdown supporté):&#10;- Tension électrique 400V&#10;- Risque d'électrocution&#10;- Zone de travail en hauteur"></textarea>
+                    <div class="danger-input-container">
+                        <input type="text" id="danger-input" class="form-control" placeholder="Commencer à taper pour voir les dangers..." autocomplete="off">
+                        <div id="danger-suggestions" class="suggestions-dropdown"></div>
+                    </div>
+                    <div id="danger-list" class="danger-list"></div>
                     <div id="danger-preview" class="markdown-preview"></div>
                 </div>
                 <div class="risk-box">

@@ -3,7 +3,9 @@ class ConsignmentProcedure {
     constructor() {
         this.data = {
             info: {},
-            warnings: {},
+            warnings: {
+                dangers: []
+            },
             materials: [],
             epiEpc: [],
             references: [],
@@ -11,8 +13,29 @@ class ConsignmentProcedure {
             improvements: []
         };
         this.epiEpcSuggestions = this.initEpiEpcSuggestions();
+        this.dangerSuggestions = this.initDangerSuggestions();
         this.initMarked();
         this.init();
+    }
+    
+    initDangerSuggestions() {
+        return [
+            { name: 'Tension électrique', color: 'tension-electrique', requiresValue: true, unit: 'V' },
+            { name: 'Air comprimé', color: 'air-comprime', requiresValue: true, unit: 'bar' },
+            { name: 'Pression hydraulique', color: 'pression-hydraulique', requiresValue: true, unit: 'bar' },
+            { name: 'Instabilité mécanique', color: 'instabilite-mecanique', requiresValue: false },
+            { name: 'Travail en hauteur', color: 'hauteur', requiresValue: true, unit: 'm' },
+            { name: 'Risque d\'électrocution', color: 'tension-electrique', requiresValue: false },
+            { name: 'Risque de chute', color: 'hauteur', requiresValue: false },
+            { name: 'Projection de particules', color: 'instabilite-mecanique', requiresValue: false },
+            { name: 'Écrasement', color: 'instabilite-mecanique', requiresValue: false },
+            { name: 'Coupure', color: 'instabilite-mecanique', requiresValue: false },
+            { name: 'Température élevée', color: 'autre', requiresValue: true, unit: '°C' },
+            { name: 'Produit chimique', color: 'autre', requiresValue: false },
+            { name: 'Rayonnement', color: 'autre', requiresValue: false },
+            { name: 'Bruit excessif', color: 'autre', requiresValue: true, unit: 'dB' },
+            { name: 'Espace confiné', color: 'autre', requiresValue: false }
+        ];
     }
     
     initMarked() {
@@ -118,6 +141,14 @@ class ConsignmentProcedure {
                     const firstSuggestion = document.querySelector('.suggestion-item');
                     if (firstSuggestion) {
                         firstSuggestion.click();
+                    } else {
+                        // Add custom entry if no suggestions
+                        const customValue = epiEpcInput.value.trim();
+                        if (customValue) {
+                            this.addEpiEpc(customValue, 'Personnalisé', 'personnalisé');
+                            epiEpcInput.value = '';
+                            this.hideSuggestions();
+                        }
                     }
                 } else if (e.key === 'Escape') {
                     this.hideSuggestions();
@@ -133,18 +164,48 @@ class ConsignmentProcedure {
             }
         });
         
-        // Avertissements with markdown support
-        const warningFields = ['danger', 'analyse-risques'];
-        warningFields.forEach(field => {
-            const element = document.getElementById(field);
-            if (element) {
-                element.addEventListener('change', () => this.saveWarnings());
-                element.addEventListener('input', () => {
-                    this.saveWarnings();
-                    this.updateMarkdownPreview(field);
-                });
+        // Danger suggestions
+        const dangerInput = document.getElementById('danger-input');
+        if (dangerInput) {
+            dangerInput.addEventListener('input', (e) => this.handleDangerInput(e));
+            dangerInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const firstSuggestion = document.querySelector('#danger-suggestions .suggestion-item');
+                    if (firstSuggestion) {
+                        firstSuggestion.click();
+                    } else {
+                        // Add custom danger
+                        const customValue = dangerInput.value.trim();
+                        if (customValue) {
+                            this.addDanger(customValue, 'autre', false);
+                            dangerInput.value = '';
+                            this.hideDangerSuggestions();
+                        }
+                    }
+                } else if (e.key === 'Escape') {
+                    this.hideDangerSuggestions();
+                }
+            });
+        }
+        
+        // Close danger suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            const dangerContainer = document.querySelector('.danger-input-container');
+            if (dangerContainer && !dangerContainer.contains(e.target)) {
+                this.hideDangerSuggestions();
             }
         });
+        
+        // Avertissements with markdown support (only for analyse-risques now)
+        const analyseRisques = document.getElementById('analyse-risques');
+        if (analyseRisques) {
+            analyseRisques.addEventListener('change', () => this.saveWarnings());
+            analyseRisques.addEventListener('input', () => {
+                this.saveWarnings();
+                this.updateMarkdownPreview('analyse-risques');
+            });
+        }
 
         // Matériel nécessaire
         document.getElementById('add-material-btn').addEventListener('click', () => this.addMaterial());
@@ -342,6 +403,110 @@ class ConsignmentProcedure {
         });
     }
     
+    handleDangerInput(e) {
+        const query = e.target.value.toLowerCase().trim();
+        
+        if (query.length < 2) {
+            this.hideDangerSuggestions();
+            return;
+        }
+        
+        const matches = this.dangerSuggestions.filter(danger => 
+            danger.name.toLowerCase().includes(query)
+        );
+        
+        if (matches.length > 0) {
+            this.showDangerSuggestions(matches);
+        } else {
+            this.hideDangerSuggestions();
+        }
+    }
+    
+    showDangerSuggestions(matches) {
+        const suggestionsDiv = document.getElementById('danger-suggestions');
+        suggestionsDiv.innerHTML = '';
+        
+        matches.forEach(danger => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'suggestion-item';
+            
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'suggestion-name';
+            nameSpan.textContent = danger.name;
+            
+            itemDiv.appendChild(nameSpan);
+            
+            itemDiv.addEventListener('click', () => {
+                if (danger.requiresValue) {
+                    const value = prompt(`Valeur pour "${danger.name}" (${danger.unit}):`);
+                    this.addDanger(danger.name, danger.color, danger.requiresValue, value ? `${value} ${danger.unit}` : null);
+                } else {
+                    this.addDanger(danger.name, danger.color, danger.requiresValue);
+                }
+                document.getElementById('danger-input').value = '';
+                this.hideDangerSuggestions();
+            });
+            
+            suggestionsDiv.appendChild(itemDiv);
+        });
+        
+        suggestionsDiv.classList.add('show');
+    }
+    
+    hideDangerSuggestions() {
+        const suggestionsDiv = document.getElementById('danger-suggestions');
+        suggestionsDiv.classList.remove('show');
+    }
+    
+    addDanger(name, color, hasValue, value = null) {
+        // Check if already added
+        const exists = this.data.warnings.dangers.find(item => item.name === name && item.value === value);
+        if (exists) {
+            this.showNotification('⚠️ Ce danger est déjà dans la liste', 'info');
+            return;
+        }
+        
+        this.data.warnings.dangers.push({ name, color, value });
+        this.updateDangerList();
+        this.saveToStorage();
+    }
+    
+    removeDanger(index) {
+        this.data.warnings.dangers.splice(index, 1);
+        this.updateDangerList();
+        this.saveToStorage();
+    }
+    
+    updateDangerList() {
+        const list = document.getElementById('danger-list');
+        list.innerHTML = '';
+        
+        this.data.warnings.dangers.forEach((danger, index) => {
+            const tag = document.createElement('div');
+            tag.className = `danger-tag ${danger.color}`;
+            
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'danger-tag-name';
+            nameSpan.textContent = danger.name;
+            tag.appendChild(nameSpan);
+            
+            if (danger.value) {
+                const valueSpan = document.createElement('span');
+                valueSpan.className = 'danger-tag-value';
+                valueSpan.textContent = danger.value;
+                tag.appendChild(valueSpan);
+            }
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'danger-tag-remove';
+            removeBtn.textContent = '×';
+            removeBtn.onclick = () => this.removeDanger(index);
+            tag.appendChild(removeBtn);
+            
+            list.appendChild(tag);
+        });
+    }
+    
     updateMarkdownPreview(fieldId) {
         const textarea = document.getElementById(fieldId);
         const preview = document.getElementById(`${fieldId}-preview`);
@@ -372,10 +537,8 @@ class ConsignmentProcedure {
     }
 
     saveWarnings() {
-        this.data.warnings = {
-            danger: document.getElementById('danger').value,
-            analyseRisques: document.getElementById('analyse-risques').value
-        };
+        this.data.warnings.analyseRisques = document.getElementById('analyse-risques').value;
+        // dangers are saved automatically when added/removed
         this.saveToStorage();
     }
 
@@ -744,16 +907,15 @@ class ConsignmentProcedure {
 
         // Charger les avertissements
         if (this.data.warnings) {
-            document.getElementById('danger').value = this.data.warnings.danger || '';
             document.getElementById('analyse-risques').value = this.data.warnings.analyseRisques || '';
             
-            // Update markdown previews
-            this.updateMarkdownPreview('danger');
+            // Update markdown preview
             this.updateMarkdownPreview('analyse-risques');
         }
 
         // Afficher les listes
         this.updateEpiEpcList();
+        this.updateDangerList();
         this.updateMaterialList();
         this.updateReferenceList();
         this.updateStepsList();
@@ -776,9 +938,15 @@ class ConsignmentProcedure {
                 const parsed = JSON.parse(saved);
                 // Validate data structure
                 if (parsed && typeof parsed === 'object') {
+                    // Handle backward compatibility for warnings structure
+                    let warnings = parsed.warnings || {};
+                    if (!warnings.dangers) {
+                        warnings.dangers = [];
+                    }
+                    
                     this.data = {
                         info: parsed.info || {},
-                        warnings: parsed.warnings || {},
+                        warnings: warnings,
                         materials: Array.isArray(parsed.materials) ? parsed.materials : [],
                         epiEpc: Array.isArray(parsed.epiEpc) ? parsed.epiEpc : [],
                         references: Array.isArray(parsed.references) ? parsed.references : [],
@@ -821,9 +989,15 @@ class ConsignmentProcedure {
                         const parsed = JSON.parse(event.target.result);
                         // Validate data structure before loading
                         if (parsed && typeof parsed === 'object') {
+                            // Handle backward compatibility for warnings structure
+                            let warnings = parsed.warnings || {};
+                            if (!warnings.dangers) {
+                                warnings.dangers = [];
+                            }
+                            
                             this.data = {
                                 info: parsed.info || {},
-                                warnings: parsed.warnings || {},
+                                warnings: warnings,
                                 materials: Array.isArray(parsed.materials) ? parsed.materials : [],
                                 epiEpc: Array.isArray(parsed.epiEpc) ? parsed.epiEpc : [],
                                 references: Array.isArray(parsed.references) ? parsed.references : [],
@@ -851,7 +1025,9 @@ class ConsignmentProcedure {
         if (confirm('⚠️ Êtes-vous sûr de vouloir effacer toutes les données? Cette action est irréversible.')) {
             this.data = {
                 info: {},
-                warnings: {},
+                warnings: {
+                    dangers: []
+                },
                 materials: [],
                 epiEpc: [],
                 references: [],
@@ -941,8 +1117,22 @@ class ConsignmentProcedure {
                 doc.text('EPI/EPC requis: ', margin, y);
                 y += 6;
                 doc.setFont("times", "normal");
+                
                 this.data.epiEpc.forEach(item => {
+                    // Color code by category
+                    const categoryColorMap = {
+                        'electrique': [234, 179, 8], // yellow
+                        'électrique': [234, 179, 8], // yellow
+                        'mecanique': [146, 64, 14], // brown
+                        'mécanique': [146, 64, 14], // brown
+                        'commun': [220, 38, 38], // red
+                        'personnalisé': [99, 102, 241] // indigo
+                    };
+                    
+                    const rgb = categoryColorMap[item.category.toLowerCase()] || [100, 116, 139];
+                    doc.setTextColor(rgb[0], rgb[1], rgb[2]);
                     doc.text(`  • ${item.name} (${item.type} - ${item.category})`, margin + 5, y);
+                    doc.setTextColor(0, 0, 0);
                     y += 5;
                 });
                 y += 3;
@@ -965,24 +1155,79 @@ class ConsignmentProcedure {
             doc.setFontSize(10);
             doc.setTextColor(0, 0, 0);
             
-            if (this.data.warnings.danger) {
+            // Render dangers with colored tags
+            if (this.data.warnings.dangers && this.data.warnings.dangers.length > 0) {
                 doc.setFont("times", "bold");
-                doc.text('Danger:', margin, y);
+                doc.text('Dangers identifiés:', margin, y);
                 y += 6;
                 doc.setFont("times", "normal");
-                const dangerLines = doc.splitTextToSize(this.data.warnings.danger, contentWidth - 20);
-                doc.text(dangerLines, margin + 10, y);
-                y += dangerLines.length * 5 + 3;
+                
+                this.data.warnings.dangers.forEach(danger => {
+                    // Map color classes to RGB values for PDF
+                    const colorMap = {
+                        'tension-electrique': [234, 179, 8], // yellow
+                        'air-comprime': [6, 182, 212], // cyan
+                        'pression-hydraulique': [139, 92, 246], // purple
+                        'instabilite-mecanique': [249, 115, 22], // orange
+                        'hauteur': [239, 68, 68], // red
+                        'autre': [100, 116, 139] // gray
+                    };
+                    
+                    const rgb = colorMap[danger.color] || [100, 116, 139];
+                    doc.setTextColor(rgb[0], rgb[1], rgb[2]);
+                    doc.setFont("times", "bold");
+                    
+                    const dangerText = danger.value ? `${danger.name}: ${danger.value}` : danger.name;
+                    doc.text(`• ${dangerText}`, margin + 5, y);
+                    y += 5;
+                    
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFont("times", "normal");
+                });
+                y += 3;
             }
             
             if (this.data.warnings.analyseRisques) {
                 doc.setFont("times", "bold");
+                doc.setTextColor(0, 0, 0);
                 doc.text('Analyse de risques:', margin, y);
                 y += 6;
                 doc.setFont("times", "normal");
-                const risquesLines = doc.splitTextToSize(this.data.warnings.analyseRisques, contentWidth - 20);
-                doc.text(risquesLines, margin + 10, y);
-                y += risquesLines.length * 5 + 3;
+                
+                // Try to render markdown with simple formatting
+                let analysisText = this.data.warnings.analyseRisques;
+                
+                // Simple markdown to plain text conversion for PDF
+                const lines = analysisText.split('\n');
+                lines.forEach(line => {
+                    const trimmed = line.trim();
+                    if (trimmed.startsWith('-') || trimmed.startsWith('*')) {
+                        // Bullet point
+                        const content = trimmed.substring(1).trim();
+                        // Remove markdown bold markers
+                        const cleanContent = content.replace(/\*\*(.*?)\*\*/g, '$1');
+                        doc.text(`  • ${cleanContent}`, margin + 5, y);
+                        y += 5;
+                    } else if (trimmed.match(/^\d+\./)) {
+                        // Numbered list
+                        const content = trimmed.replace(/^\d+\./, '').trim();
+                        const cleanContent = content.replace(/\*\*(.*?)\*\*/g, '$1');
+                        doc.text(`  ${trimmed.match(/^\d+\./)[0]} ${cleanContent}`, margin + 5, y);
+                        y += 5;
+                    } else if (trimmed) {
+                        // Regular paragraph
+                        const cleanContent = trimmed.replace(/\*\*(.*?)\*\*/g, '$1');
+                        const textLines = doc.splitTextToSize(cleanContent, contentWidth - 20);
+                        doc.text(textLines, margin + 10, y);
+                        y += textLines.length * 5 + 2;
+                    }
+                    
+                    if (y > 270) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                });
+                y += 3;
             }
             
             y += 5;
