@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procédure de Consignation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📋 Procédure de Consignation</h1>
+            <p class="subtitle">Documentation de sécurité pour intervention</p>
+        </header>
+
+        <!-- Informations sur l'intervention -->
+        <section class="card info-section">
+            <h2>📝 Informations sur l'intervention</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="date">Date :</label>
+                    <input type="date" id="date" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="numero">Numéro :</label>
+                    <input type="text" id="numero" class="form-control" placeholder="N° d'intervention">
+                </div>
+                <div class="form-group">
+                    <label for="personnel">Personnel :</label>
+                    <input type="text" id="personnel" class="form-control" placeholder="Nom du personnel">
+                </div>
+                <div class="form-group">
+                    <label for="localisation">Localisation :</label>
+                    <input type="text" id="localisation" class="form-control" placeholder="Lieu d'intervention">
+                </div>
+                <div class="form-group full-width">
+                    <label for="epi-epc">EPI/EPC requis :</label>
+                    <textarea id="epi-epc" class="form-control" rows="2" placeholder="Liste des équipements de protection individuelle/collective"></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- Avertissement -->
+        <section class="card warning-section">
+            <h2>⚠️ Avertissements</h2>
+            <div class="warning-content">
+                <div class="danger-box">
+                    <h3>🚨 Danger</h3>
+                    <textarea id="danger" class="form-control" rows="3" placeholder="Décrire les dangers identifiés..."></textarea>
+                </div>
+                <div class="risk-box">
+                    <h3>🔍 Analyse de risques</h3>
+                    <textarea id="analyse-risques" class="form-control" rows="5" placeholder="Analyse détaillée des risques..."></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- Matériel nécessaire -->
+        <section class="card material-section">
+            <h2>🔧 Matériel nécessaire</h2>
+            <div class="material-input-group">
+                <input type="text" id="new-material" class="form-control" placeholder="Ajouter un élément...">
+                <button id="add-material-btn" class="btn btn-primary">Ajouter</button>
+            </div>
+            <ul id="material-list" class="material-list"></ul>
+        </section>
+
+        <!-- Instructions de consignation -->
+        <section class="card instructions-section">
+            <h2>📖 Instructions de consignation</h2>
+            <div class="instructions-controls">
+                <button id="add-step-btn" class="btn btn-primary">➕ Ajouter une étape</button>
+            </div>
+            <div class="instructions-table">
+                <div class="table-header">
+                    <div class="col-repere">Repère</div>
+                    <div class="col-instruction">Instruction</div>
+                    <div class="col-photo">Photo</div>
+                </div>
+                <div id="instructions-body" class="table-body">
+                    <!-- Les étapes seront ajoutées dynamiquement -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Pistes d'amélioration -->
+        <section class="card improvement-section">
+            <h2>💡 Pistes d'amélioration</h2>
+            <div class="improvement-input-group">
+                <input type="text" id="new-improvement" class="form-control" placeholder="Ajouter une suggestion...">
+                <button id="add-improvement-btn" class="btn btn-primary">Ajouter</button>
+            </div>
+            <ul id="improvement-list" class="improvement-list"></ul>
+        </section>
+
+        <!-- Actions -->
+        <div class="actions">
+            <button id="save-btn" class="btn btn-success">💾 Enregistrer</button>
+            <button id="load-btn" class="btn btn-info">📂 Charger</button>
+            <button id="print-btn" class="btn btn-secondary">🖨️ Imprimer</button>
+            <button id="clear-btn" class="btn btn-danger">🗑️ Effacer tout</button>
+        </div>
+
+        <footer>
+            <p>Document de sécurité - Procédure de consignation</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
