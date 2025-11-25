@@ -703,8 +703,366 @@ const handleFileLoad = (event) => {
   reader.readAsText(file)
 }
 
-const printPage = () => {
-  window.print()
+const printPage = async () => {
+  showNotification('📄 Génération du PDF en cours...', 'info')
+
+  // Color maps for PDF generation
+  const categoryColorMap = {
+    'electrique': [234, 179, 8],
+    'électrique': [234, 179, 8],
+    'mecanique': [146, 64, 14],
+    'mécanique': [146, 64, 14],
+    'commun': [220, 38, 38],
+    'personnalisé': [99, 102, 241]
+  }
+
+  const dangerColorMap = {
+    'tension-electrique': [234, 179, 8],
+    'air-comprime': [6, 182, 212],
+    'pression-hydraulique': [139, 92, 246],
+    'instabilite-mecanique': [249, 115, 22],
+    'hauteur': [239, 68, 68],
+    'autre': [100, 116, 139]
+  }
+
+  const defaultColor = [100, 116, 139]
+
+  try {
+    // Dynamically import jsPDF
+    const jsPDFModule = await import('jspdf')
+    const { jsPDF } = jsPDFModule
+
+    const doc = new jsPDF()
+
+    // Use Times New Roman for formal appearance
+    doc.setFont('times', 'normal')
+
+    let y = 20
+    const pageWidth = doc.internal.pageSize.getWidth()
+    const margin = 20
+    const contentWidth = pageWidth - 2 * margin
+
+    // Title - Black, formal
+    doc.setFontSize(18)
+    doc.setFont('times', 'bold')
+    doc.setTextColor(0, 0, 0)
+    doc.text('Procédure de Consignation', pageWidth / 2, y, { align: 'center' })
+    y += 10
+
+    doc.setFontSize(10)
+    doc.setFont('times', 'italic')
+    doc.text('Documentation de sécurité pour intervention', pageWidth / 2, y, { align: 'center' })
+    y += 15
+
+    // Section: Informations sur l'intervention
+    doc.setFontSize(12)
+    doc.setFont('times', 'bold')
+    doc.setTextColor(0, 51, 102) // Dark blue
+    doc.text('Informations sur l\'intervention', margin, y)
+    y += 8
+
+    doc.setFontSize(10)
+    doc.setFont('times', 'normal')
+    doc.setTextColor(0, 0, 0)
+
+    if (data.info.titre) {
+      doc.setFont('times', 'bold')
+      doc.text('Titre: ', margin, y)
+      doc.setFont('times', 'normal')
+      doc.text(data.info.titre, margin + 20, y)
+      y += 6
+    }
+
+    if (data.info.description) {
+      doc.setFont('times', 'bold')
+      doc.text('Description: ', margin, y)
+      y += 6
+      doc.setFont('times', 'normal')
+      const descLines = doc.splitTextToSize(data.info.description, contentWidth - 20)
+      doc.text(descLines, margin + 10, y)
+      y += descLines.length * 5 + 2
+    }
+
+    if (data.info.date || data.info.numero || data.info.personnel || data.info.localisation) {
+      const infoText = []
+      if (data.info.date)
+        infoText.push(`Date: ${data.info.date}`)
+      if (data.info.numero)
+        infoText.push(`Numéro: ${data.info.numero}`)
+      if (data.info.personnel)
+        infoText.push(`Personnel: ${data.info.personnel}`)
+      if (data.info.localisation)
+        infoText.push(`Localisation: ${data.info.localisation}`)
+      doc.text(infoText.join(' | '), margin, y)
+      y += 8
+    }
+
+    // EPI/EPC
+    if (data.epiEpc && data.epiEpc.length > 0) {
+      doc.setFont('times', 'bold')
+      doc.text('EPI/EPC requis: ', margin, y)
+      y += 6
+      doc.setFont('times', 'normal')
+
+      data.epiEpc.forEach((item) => {
+        const rgb = categoryColorMap[item.category.toLowerCase()] || defaultColor
+        doc.setTextColor(rgb[0], rgb[1], rgb[2])
+        doc.text(`• ${item.name} (${item.type} - ${item.category})`, margin + 5, y)
+        doc.setTextColor(0, 0, 0)
+        y += 5
+
+        if (y > 270) {
+          doc.addPage()
+          y = 20
+        }
+      })
+      y += 3
+    }
+
+    y += 5
+
+    // Section: Avertissements
+    if (y > 250) {
+      doc.addPage()
+      y = 20
+    }
+
+    doc.setFontSize(12)
+    doc.setFont('times', 'bold')
+    doc.setTextColor(153, 0, 0) // Dark red
+    doc.text('Avertissements', margin, y)
+    y += 8
+
+    doc.setFontSize(10)
+    doc.setTextColor(0, 0, 0)
+
+    // Render dangers
+    if (data.warnings.dangers && data.warnings.dangers.length > 0) {
+      doc.setFont('times', 'bold')
+      doc.text('Dangers identifiés:', margin, y)
+      y += 6
+      doc.setFont('times', 'normal')
+
+      data.warnings.dangers.forEach((danger) => {
+        const rgb = dangerColorMap[danger.color] || defaultColor
+        doc.setTextColor(rgb[0], rgb[1], rgb[2])
+        doc.setFont('times', 'bold')
+
+        const dangerText = danger.value ? `• ${danger.name}: ${danger.value}` : `• ${danger.name}`
+        doc.text(dangerText, margin + 5, y)
+        y += 5
+
+        doc.setTextColor(0, 0, 0)
+        doc.setFont('times', 'normal')
+
+        if (y > 270) {
+          doc.addPage()
+          y = 20
+        }
+      })
+      y += 3
+    }
+
+    if (data.warnings.analyseRisques) {
+      doc.setFont('times', 'bold')
+      doc.setTextColor(0, 0, 0)
+      doc.text('Analyse de risques:', margin, y)
+      y += 6
+      doc.setFont('times', 'normal')
+
+      // Multi-level markdown to plain text conversion for PDF
+      const lines = data.warnings.analyseRisques.split('\n')
+      lines.forEach((line) => {
+        const leadingSpaces = line.match(/^(\s*)/)[1].length
+        const indentLevel = Math.floor(leadingSpaces / 2)
+        const trimmed = line.trim()
+
+        const baseIndent = margin + 5
+        const levelIndent = indentLevel * 5
+        const currentIndent = baseIndent + levelIndent
+
+        const bulletChars = ['•', '◦', '▪', '▫', '-']
+        const bullet = bulletChars[Math.min(indentLevel, bulletChars.length - 1)]
+
+        if (trimmed.startsWith('-') || trimmed.startsWith('*')) {
+          const content = trimmed.substring(1).trim()
+          const cleanContent = content.replace(/\*\*(.*?)\*\*/g, '$1')
+          const textLines = doc.splitTextToSize(cleanContent, contentWidth - 20 - levelIndent)
+          doc.text(`${bullet} ${textLines[0]}`, currentIndent, y)
+          y += 5
+          for (let i = 1; i < textLines.length; i++) {
+            doc.text(textLines[i], currentIndent + 4, y)
+            y += 5
+          }
+        }
+        else if (trimmed.match(/^\d+\./)) {
+          const content = trimmed.replace(/^\d+\./, '').trim()
+          const cleanContent = content.replace(/\*\*(.*?)\*\*/g, '$1')
+          const number = trimmed.match(/^\d+\./)[0]
+          const textLines = doc.splitTextToSize(cleanContent, contentWidth - 20 - levelIndent)
+          doc.text(`${number} ${textLines[0]}`, currentIndent, y)
+          y += 5
+          for (let i = 1; i < textLines.length; i++) {
+            doc.text(textLines[i], currentIndent + 6, y)
+            y += 5
+          }
+        }
+        else if (trimmed) {
+          const cleanContent = trimmed.replace(/\*\*(.*?)\*\*/g, '$1')
+          const textLines = doc.splitTextToSize(cleanContent, contentWidth - 20 - levelIndent)
+          doc.text(textLines, currentIndent, y)
+          y += textLines.length * 5 + 2
+        }
+
+        if (y > 270) {
+          doc.addPage()
+          y = 20
+        }
+      })
+      y += 3
+    }
+
+    y += 5
+
+    // Section: Matériel nécessaire
+    if (data.materials && data.materials.length > 0) {
+      if (y > 250) {
+        doc.addPage()
+        y = 20
+      }
+
+      doc.setFontSize(12)
+      doc.setFont('times', 'bold')
+      doc.setTextColor(0, 102, 51) // Dark green
+      doc.text('Matériel nécessaire', margin, y)
+      y += 8
+
+      doc.setFontSize(9)
+      doc.setTextColor(0, 0, 0)
+
+      data.materials.forEach((material) => {
+        doc.setFont('times', 'normal')
+        const total = material.quantity * material.price
+        doc.text(`${material.designation}`, margin, y)
+        doc.text(`Qté: ${material.quantity}`, margin + 100, y)
+        doc.text(`Prix: ${material.price.toFixed(2)} €`, margin + 130, y)
+        doc.text(`Total: ${total.toFixed(2)} €`, margin + 160, y)
+        y += 6
+      })
+
+      const grandTotal = data.materials.reduce((sum, m) => sum + (m.quantity * m.price), 0)
+      doc.setFont('times', 'bold')
+      doc.text(`Total général: ${grandTotal.toFixed(2)} €`, margin + 140, y)
+      y += 10
+    }
+
+    // Section: Références
+    if (data.references && data.references.length > 0) {
+      if (y > 250) {
+        doc.addPage()
+        y = 20
+      }
+
+      doc.setFontSize(12)
+      doc.setFont('times', 'bold')
+      doc.setTextColor(102, 51, 153) // Purple
+      doc.text('Liste de Références', margin, y)
+      y += 8
+
+      doc.setFontSize(9)
+      doc.setTextColor(0, 0, 0)
+      doc.setFont('times', 'normal')
+
+      data.references.forEach((ref) => {
+        const refText = `${ref.document} - ${ref.page || 'N/A'} (${ref.type})`
+        const refLines = doc.splitTextToSize(refText, contentWidth)
+        doc.text(refLines, margin, y)
+        y += refLines.length * 5 + 2
+
+        if (y > 270) {
+          doc.addPage()
+          y = 20
+        }
+      })
+      y += 5
+    }
+
+    // Section: Instructions de consignation
+    if (data.steps && data.steps.length > 0) {
+      if (y > 240) {
+        doc.addPage()
+        y = 20
+      }
+
+      doc.setFontSize(12)
+      doc.setFont('times', 'bold')
+      doc.setTextColor(102, 51, 153) // Purple
+      doc.text('Instructions de consignation', margin, y)
+      y += 8
+
+      doc.setFontSize(9)
+      doc.setTextColor(0, 0, 0)
+
+      data.steps.forEach((step, index) => {
+        doc.setFont('times', 'bold')
+        doc.text(`${index + 1}. ${step.repere || `Étape ${index + 1}`}`, margin, y)
+        y += 6
+
+        if (step.instruction) {
+          doc.setFont('times', 'normal')
+          const instrLines = doc.splitTextToSize(step.instruction, contentWidth - 10)
+          doc.text(instrLines, margin + 5, y)
+          y += instrLines.length * 5 + 3
+        }
+
+        if (y > 270) {
+          doc.addPage()
+          y = 20
+        }
+      })
+      y += 5
+    }
+
+    // Section: Pistes d'amélioration
+    if (data.improvements && data.improvements.length > 0) {
+      if (y > 250) {
+        doc.addPage()
+        y = 20
+      }
+
+      doc.setFontSize(12)
+      doc.setFont('times', 'bold')
+      doc.setTextColor(204, 153, 0) // Orange
+      doc.text('Pistes d\'amélioration', margin, y)
+      y += 8
+
+      doc.setFontSize(9)
+      doc.setTextColor(0, 0, 0)
+      doc.setFont('times', 'normal')
+
+      data.improvements.forEach((improvement) => {
+        doc.text(`• ${improvement}`, margin, y)
+        y += 6
+
+        if (y > 270) {
+          doc.addPage()
+          y = 20
+        }
+      })
+    }
+
+    // Save the PDF
+    const sanitizedNumero = (data.info.numero || 'procedure').replace(/[^a-z0-9_]/gi, '_')
+    const filename = `Procedure-Consignation-${sanitizedNumero}-${new Date().toISOString().split('T')[0]}.pdf`
+    doc.save(filename)
+    showNotification('✅ PDF généré avec succès!', 'success')
+  }
+  catch (error) {
+    console.error('Erreur lors de la génération PDF:', error)
+    showNotification('❌ Erreur lors de la génération du PDF, utilisation de l\'impression navigateur', 'error')
+    // Fallback to browser print
+    window.print()
+  }
 }
 
 const clearAll = () => {

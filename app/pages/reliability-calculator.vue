@@ -188,16 +188,14 @@ const calculateExponential = (n0, time, n1) => {
   const ratio = n1 / n0
   const lambda = -Math.log(ratio) / time
 
-  // Generate chart data
+  // Generate chart data as {x, y} points for proper numeric axis scaling
   const maxTime = time * 3
   const steps = 100
-  const labels = []
-  const values = []
+  const dataPoints = []
 
   for (let i = 0; i <= steps; i++) {
     const currentTime = (maxTime / steps) * i
-    labels.push(currentTime)
-    values.push(Math.exp(-lambda * currentTime))
+    dataPoints.push({ x: currentTime, y: Math.exp(-lambda * currentTime) })
   }
 
   return {
@@ -205,7 +203,7 @@ const calculateExponential = (n0, time, n1) => {
     equation: 'R(t) = e^(-λ * t)',
     lambda,
     reliability: Math.exp(-lambda * time),
-    chartData: { labels, values }
+    chartData: { dataPoints }
   }
 }
 
@@ -213,17 +211,15 @@ const calculateLinear = (n0, time, n1) => {
   const ratio = n1 / n0
   const a = (ratio - 1) / time
 
-  // Generate chart data
+  // Generate chart data as {x, y} points for proper numeric axis scaling
   const maxTime = time * 3
   const steps = 100
-  const labels = []
-  const values = []
+  const dataPoints = []
 
   for (let i = 0; i <= steps; i++) {
     const currentTime = (maxTime / steps) * i
     const reliability = Math.max(0, a * currentTime + 1)
-    labels.push(currentTime)
-    values.push(reliability)
+    dataPoints.push({ x: currentTime, y: reliability })
   }
 
   return {
@@ -231,7 +227,7 @@ const calculateLinear = (n0, time, n1) => {
     equation: 'R(t) = a * t + 1',
     a,
     reliability: a * time + 1,
-    chartData: { labels, values }
+    chartData: { dataPoints }
   }
 }
 
@@ -290,6 +286,7 @@ const renderChart = () => {
         }
       }
     : {
+        type: 'linear',
         display: true,
         title: {
           display: true,
@@ -301,6 +298,7 @@ const renderChart = () => {
       }
 
   const xAxisConfig = {
+    type: 'linear',
     display: true,
     title: {
       display: true,
@@ -314,10 +312,9 @@ const renderChart = () => {
   chartInstance = new Chart(chartCanvas.value, {
     type: 'line',
     data: {
-      labels: result.value.chartData.labels,
       datasets: [{
         label: 'Reliability R(t)',
-        data: result.value.chartData.values,
+        data: result.value.chartData.dataPoints,
         borderColor: 'rgb(102, 126, 234)',
         backgroundColor: 'rgba(102, 126, 234, 0.1)',
         tension: 0.4,
