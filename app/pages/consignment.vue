@@ -1036,7 +1036,8 @@ const printPage = async () => {
         const levelIndent = indentLevel * 5
         const currentIndent = baseIndent + levelIndent
 
-        const bulletChars = ['•', '◦', '▪', '▫', '-']
+        // Use simple ASCII characters that render correctly in Times font
+        const bulletChars = ['-', 'o', '*', '+', '>']
         const bullet = bulletChars[Math.min(indentLevel, bulletChars.length - 1)]
 
         if (trimmed.startsWith('-') || trimmed.startsWith('*')) {
