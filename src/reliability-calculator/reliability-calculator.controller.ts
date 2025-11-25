@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Res, Query, HttpException, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 import { ReliabilityCalculatorService, ReliabilityInput, ReliabilityResult } from './reliability-calculator.service';
-import * as PDFDocument from 'pdfkit';
+import PDFDocument from 'pdfkit';
 
 @Controller('api/reliability')
 export class ReliabilityCalculatorController {
