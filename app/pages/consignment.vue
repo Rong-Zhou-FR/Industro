@@ -372,35 +372,162 @@ const epiEpcSuggestions = {
 
 // Danger Suggestions
 const dangerSuggestions = [
-  { name: 'Tension électrique', color: 'tension-electrique', requiresValue: true, unit: 'V' },
-  { name: 'Air comprimé', color: 'air-comprime', requiresValue: true, unit: 'bar' },
-  { name: 'Pression hydraulique', color: 'pression-hydraulique', requiresValue: true, unit: 'bar' },
-  { name: 'Instabilité mécanique', color: 'instabilite-mecanique', requiresValue: false },
-  { name: 'Travail en hauteur', color: 'hauteur', requiresValue: true, unit: 'm' },
-  { name: 'Risque d\'électrocution', color: 'tension-electrique', requiresValue: false },
-  { name: 'Risque de chute', color: 'hauteur', requiresValue: false },
-  { name: 'Projection de particules', color: 'instabilite-mecanique', requiresValue: false },
-  { name: 'Écrasement', color: 'instabilite-mecanique', requiresValue: false },
-  { name: 'Coupure', color: 'instabilite-mecanique', requiresValue: false },
-  { name: 'Température élevée', color: 'autre', requiresValue: true, unit: '°C' },
-  { name: 'Produit chimique', color: 'autre', requiresValue: false },
-  { name: 'Rayonnement', color: 'autre', requiresValue: false },
-  { name: 'Bruit excessif', color: 'autre', requiresValue: true, unit: 'dB' },
-  { name: 'Espace confiné', color: 'autre', requiresValue: false },
-  { name: 'Atmosphère explosive', color: 'autre', requiresValue: false },
-  { name: 'Froid / Gel', color: 'autre', requiresValue: true, unit: '°C' },
-  { name: 'Charge suspendue', color: 'instabilite-mecanique', requiresValue: false },
-  { name: 'Chariot élévateur', color: 'instabilite-mecanique', requiresValue: false },
-  { name: 'Laser', color: 'autre', requiresValue: false },
-  { name: 'Produit corrosif', color: 'autre', requiresValue: false },
-  { name: 'Produit explosif', color: 'autre', requiresValue: false },
-  { name: 'Produit inflammable', color: 'autre', requiresValue: false },
-  { name: 'Produit toxique', color: 'autre', requiresValue: false },
-  { name: 'Risque biologique', color: 'autre', requiresValue: false },
-  { name: 'Radioactivité', color: 'autre', requiresValue: false },
-  { name: 'Champ magnétique', color: 'autre', requiresValue: false },
-  { name: 'Trébuchement', color: 'hauteur', requiresValue: false }
+  { name: 'Tension électrique', color: 'tension-electrique', requiresValue: true, unit: 'V', pictogram: 'DANGER-electricite.jpg' },
+  { name: 'Air comprimé', color: 'air-comprime', requiresValue: true, unit: 'bar', pictogram: 'DANGER-general.jpg' },
+  { name: 'Pression hydraulique', color: 'pression-hydraulique', requiresValue: true, unit: 'bar', pictogram: 'DANGER-general.jpg' },
+  { name: 'Instabilité mécanique', color: 'instabilite-mecanique', requiresValue: false, pictogram: 'DANGER-general.jpg' },
+  { name: 'Travail en hauteur', color: 'hauteur', requiresValue: true, unit: 'm', pictogram: 'DANGER-chute.jpg' },
+  { name: 'Risque d\'électrocution', color: 'tension-electrique', requiresValue: false, pictogram: 'DANGER-electricite.jpg' },
+  { name: 'Risque de chute', color: 'hauteur', requiresValue: false, pictogram: 'DANGER-chute.jpg' },
+  { name: 'Projection de particules', color: 'instabilite-mecanique', requiresValue: false, pictogram: 'DANGER-general.jpg' },
+  { name: 'Écrasement', color: 'instabilite-mecanique', requiresValue: false, pictogram: 'DANGER-charge-suspendue.jpg' },
+  { name: 'Coupure', color: 'instabilite-mecanique', requiresValue: false, pictogram: 'DANGER-general.jpg' },
+  { name: 'Température élevée', color: 'autre', requiresValue: true, unit: '°C', pictogram: 'DANGER-general.jpg' },
+  { name: 'Produit chimique', color: 'autre', requiresValue: false, pictogram: 'DANGER-produit-nocif.jpg' },
+  { name: 'Rayonnement', color: 'autre', requiresValue: false, pictogram: 'DANGER-radiations-non-ionisantes.jpg' },
+  { name: 'Bruit excessif', color: 'autre', requiresValue: true, unit: 'dB', pictogram: 'DANGER-general.jpg' },
+  { name: 'Espace confiné', color: 'autre', requiresValue: false, pictogram: 'DANGER-general.jpg' },
+  { name: 'Atmosphère explosive', color: 'autre', requiresValue: false, pictogram: 'DANGER-atmosphere-explosive.jpg' },
+  { name: 'Froid / Gel', color: 'autre', requiresValue: true, unit: '°C', pictogram: 'DANGER-froid-gel.jpg' },
+  { name: 'Charge suspendue', color: 'instabilite-mecanique', requiresValue: false, pictogram: 'DANGER-charge-suspendue.jpg' },
+  { name: 'Chariot élévateur', color: 'instabilite-mecanique', requiresValue: false, pictogram: 'DANGER-chariot.jpg' },
+  { name: 'Laser', color: 'autre', requiresValue: false, pictogram: 'DANGER-laser.jpg' },
+  { name: 'Produit corrosif', color: 'autre', requiresValue: false, pictogram: 'DANGER-produit-corrosif.jpg' },
+  { name: 'Produit explosif', color: 'autre', requiresValue: false, pictogram: 'DANGER-produit-explosif.jpg' },
+  { name: 'Produit inflammable', color: 'autre', requiresValue: false, pictogram: 'DANGER-produit-inflammable.jpg' },
+  { name: 'Produit toxique', color: 'autre', requiresValue: false, pictogram: 'DANGER-produit-toxique.jpg' },
+  { name: 'Risque biologique', color: 'autre', requiresValue: false, pictogram: 'DANGER-risque-biologique.jpg' },
+  { name: 'Radioactivité', color: 'autre', requiresValue: false, pictogram: 'DANGER-radioactivite.jpg' },
+  { name: 'Champ magnétique', color: 'autre', requiresValue: false, pictogram: 'DANGER-champ-magnetique.jpg' },
+  { name: 'Trébuchement', color: 'hauteur', requiresValue: false, pictogram: 'DANGER-trebuchement.jpg' }
 ]
+
+// Helper function to get EPI/EPC pictogram filename
+const getEpiEpcPictogram = (name) => {
+  const lowerName = name.toLowerCase()
+  const pictogramMap = {
+    'casque': 'OBLIGATION-casque.jpg',
+    'casque isolant': 'OBLIGATION-casque.jpg',
+    'casque de chantier': 'OBLIGATION-casque.jpg',
+    'casque antibruit': 'OBLIGATION-casque-antibruit.jpg',
+    'protections auditives': 'OBLIGATION-casque-antibruit.jpg',
+    'lunettes': 'OBLIGATION-lunettes.jpg',
+    'lunettes isolantes': 'OBLIGATION-lunettes.jpg',
+    'lunettes de protection': 'OBLIGATION-lunettes.jpg',
+    'gants': 'OBLIGATION-gants.jpg',
+    'gants isolants': 'OBLIGATION-gants.jpg',
+    'gants anti-coupure': 'OBLIGATION-gants.jpg',
+    'gants de manutention': 'OBLIGATION-gants.jpg',
+    'chaussures': 'OBLIGATION-chaussures.jpg',
+    'chaussures de sécurité': 'OBLIGATION-chaussures.jpg',
+    'chaussures isolantes': 'OBLIGATION-chaussures.jpg',
+    'harnais': 'OBLIGATION-harnais.jpg',
+    'harnais de sécurité': 'OBLIGATION-harnais.jpg',
+    'visière': 'OBLIGATION-visiere.jpg',
+    'écran facial': 'OBLIGATION-visiere.jpg',
+    'écran facial isolant': 'OBLIGATION-visiere.jpg',
+    'masque': 'OBLIGATION-protection-voies-espiratoires.jpg',
+    'masque respiratoire': 'OBLIGATION-protection-voies-espiratoires.jpg',
+    'combinaison': 'OBLIGATION-combinaison.jpg',
+    'vêtements isolants': 'OBLIGATION-combinaison.jpg',
+    'vêtements de travail': 'OBLIGATION-combinaison.jpg',
+    'gilet': 'OBLIGATION-general.jpg',
+    'gilet haute visibilité': 'OBLIGATION-general.jpg'
+  }
+
+  // Try exact match first
+  if (pictogramMap[lowerName])
+    return pictogramMap[lowerName]
+
+  // Try partial match
+  for (const [key, value] of Object.entries(pictogramMap)) {
+    if (lowerName.includes(key) || key.includes(lowerName))
+      return value
+  }
+
+  return 'OBLIGATION-general.jpg'
+}
+
+// Helper function to get danger pictogram filename
+const getDangerPictogram = (dangerName) => {
+  const suggestion = dangerSuggestions.find(d => d.name === dangerName)
+  if (suggestion && suggestion.pictogram)
+    return suggestion.pictogram
+  return 'DANGER-general.jpg'
+}
+
+// Helper function to load image as base64
+const loadImageAsBase64 = (src) => {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.crossOrigin = 'Anonymous'
+    img.onload = function () {
+      try {
+        const canvas = document.createElement('canvas')
+        canvas.width = this.naturalWidth
+        canvas.height = this.naturalHeight
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(this, 0, 0)
+        const base64 = canvas.toDataURL('image/jpeg')
+        resolve(base64)
+      }
+      catch (e) {
+        reject(e)
+      }
+    }
+    img.onerror = () => reject(new Error(`Failed to load image: ${src}`))
+    img.src = src
+  })
+}
+
+// Preload all needed pictograms for PDF
+const preloadPictograms = async () => {
+  const pictograms = {}
+
+  // Collect all unique pictograms needed
+  const obligationPictograms = new Set()
+  const dangerPictograms = new Set()
+
+  // EPI/EPC pictograms
+  if (data.epiEpc) {
+    data.epiEpc.forEach((item) => {
+      const picto = getEpiEpcPictogram(item.name)
+      obligationPictograms.add(picto)
+    })
+  }
+
+  // Danger pictograms
+  if (data.warnings.dangers) {
+    data.warnings.dangers.forEach((danger) => {
+      const picto = getDangerPictogram(danger.name)
+      dangerPictograms.add(picto)
+    })
+  }
+
+  // Load obligation pictograms
+  for (const picto of obligationPictograms) {
+    try {
+      const base64 = await loadImageAsBase64(`/resources/Pictogrammes_jpeg/OBLIGATION/${picto}`)
+      pictograms[`OBLIGATION/${picto}`] = base64
+    }
+    catch (e) {
+      console.warn(`Could not load pictogram: ${picto}`)
+    }
+  }
+
+  // Load danger pictograms
+  for (const picto of dangerPictograms) {
+    try {
+      const base64 = await loadImageAsBase64(`/resources/Pictogrammes_jpeg/AVERTISSEMENT_DANGER/${picto}`)
+      pictograms[`DANGER/${picto}`] = base64
+    }
+    catch (e) {
+      console.warn(`Could not load pictogram: ${picto}`)
+    }
+  }
+
+  return pictograms
+}
 
 // Computed properties
 const epiEpcMatches = computed(() => {
@@ -728,6 +855,9 @@ const printPage = async () => {
   const defaultColor = [100, 116, 139]
 
   try {
+    // Preload pictograms
+    const pictograms = await preloadPictograms()
+
     // Dynamically import jsPDF
     const jsPDFModule = await import('jspdf')
     const { jsPDF } = jsPDFModule
@@ -741,6 +871,7 @@ const printPage = async () => {
     const pageWidth = doc.internal.pageSize.getWidth()
     const margin = 20
     const contentWidth = pageWidth - 2 * margin
+    const pictoSize = 8 // Size of pictogram in mm
 
     // Title - Black, formal
     doc.setFontSize(18)
@@ -805,11 +936,23 @@ const printPage = async () => {
       doc.setFont('times', 'normal')
 
       data.epiEpc.forEach((item) => {
+        // Try to add pictogram
+        const pictoFile = getEpiEpcPictogram(item.name)
+        const pictoKey = `OBLIGATION/${pictoFile}`
+        if (pictograms[pictoKey]) {
+          try {
+            doc.addImage(pictograms[pictoKey], 'JPEG', margin + 5, y - 5, pictoSize, pictoSize)
+          }
+          catch (e) {
+            console.warn('Failed to add pictogram:', e)
+          }
+        }
+
         const rgb = categoryColorMap[item.category.toLowerCase()] || defaultColor
         doc.setTextColor(rgb[0], rgb[1], rgb[2])
-        doc.text(`• ${item.name} (${item.type} - ${item.category})`, margin + 5, y)
+        doc.text(`${item.name} (${item.type} - ${item.category})`, margin + 5 + pictoSize + 3, y)
         doc.setTextColor(0, 0, 0)
-        y += 5
+        y += Math.max(pictoSize, 5) + 2
 
         if (y > 270) {
           doc.addPage()
@@ -844,13 +987,25 @@ const printPage = async () => {
       doc.setFont('times', 'normal')
 
       data.warnings.dangers.forEach((danger) => {
+        // Try to add pictogram
+        const pictoFile = getDangerPictogram(danger.name)
+        const pictoKey = `DANGER/${pictoFile}`
+        if (pictograms[pictoKey]) {
+          try {
+            doc.addImage(pictograms[pictoKey], 'JPEG', margin + 5, y - 5, pictoSize, pictoSize)
+          }
+          catch (e) {
+            console.warn('Failed to add danger pictogram:', e)
+          }
+        }
+
         const rgb = dangerColorMap[danger.color] || defaultColor
         doc.setTextColor(rgb[0], rgb[1], rgb[2])
         doc.setFont('times', 'bold')
 
-        const dangerText = danger.value ? `• ${danger.name}: ${danger.value}` : `• ${danger.name}`
-        doc.text(dangerText, margin + 5, y)
-        y += 5
+        const dangerText = danger.value ? `${danger.name}: ${danger.value}` : danger.name
+        doc.text(dangerText, margin + 5 + pictoSize + 3, y)
+        y += Math.max(pictoSize, 5) + 2
 
         doc.setTextColor(0, 0, 0)
         doc.setFont('times', 'normal')
