@@ -10,7 +10,7 @@
 
       <!-- Informations sur l'intervention -->
       <section class="card info-section">
-        <h2>📝 Informations sur l'intervention</h2>
+        <h2>{{ translate('consignment.interventionInfo') }}</h2>
         <div class="form-grid">
           <div class="form-group full-width">
             <label for="titre">Titre :</label>
@@ -82,10 +82,10 @@
 
       <!-- Avertissement -->
       <section class="card warning-section">
-        <h2>⚠️ Avertissements</h2>
+        <h2>{{ translate('consignment.warnings') }}</h2>
         <div class="warning-content">
           <div class="danger-box">
-            <h3>🚨 Danger</h3>
+            <h3>{{ translate('consignment.danger') }}</h3>
             <div class="danger-input-container">
               <input
                 v-model="dangerQuery"
@@ -116,7 +116,7 @@
             </div>
           </div>
           <div class="risk-box">
-            <h3>🔍 Analyse de risques</h3>
+            <h3>{{ translate('consignment.riskAnalysis') }}</h3>
             <textarea
               v-model="data.warnings.analyseRisques"
               class="form-control markdown-support"
@@ -130,7 +130,7 @@
 
       <!-- Matériel nécessaire -->
       <section class="card material-section">
-        <h2>🔧 Matériel nécessaire</h2>
+        <h2>{{ translate('consignment.requiredMaterial') }}</h2>
         <div class="material-input-group">
           <input v-model="newMaterial.designation" type="text" class="form-control" placeholder="Désignation" @keypress.enter="addMaterial">
           <input v-model.number="newMaterial.quantity" type="number" class="form-control" placeholder="Nombre" min="1">
@@ -168,7 +168,7 @@
 
       <!-- Liste de Références -->
       <section class="card references-section">
-        <h2>📚 Liste de Références</h2>
+        <h2>{{ translate('consignment.references') }}</h2>
         <div class="reference-controls">
           <div class="reference-input-group">
             <input v-model="newReference.document" type="text" class="form-control" placeholder="Document" @keypress.enter="addReference">
@@ -207,7 +207,7 @@
 
       <!-- Instructions de consignation -->
       <section class="card instructions-section">
-        <h2>📖 Instructions de consignation</h2>
+        <h2>{{ translate('consignment.consignmentInstructions') }}</h2>
         <div class="instructions-controls">
           <button class="btn btn-primary" @click="addStep">➕ Ajouter une étape</button>
         </div>
@@ -248,7 +248,7 @@
 
       <!-- Pistes d'amélioration -->
       <section class="card improvement-section">
-        <h2>💡 Pistes d'amélioration</h2>
+        <h2>{{ translate('consignment.improvements') }}</h2>
         <div class="improvement-input-group">
           <input v-model="newImprovement" type="text" class="form-control" placeholder="Ajouter une suggestion..." @keypress.enter="addImprovement">
           <button class="btn btn-primary" @click="addImprovement">Ajouter</button>
@@ -263,14 +263,14 @@
 
       <!-- Actions -->
       <div class="actions">
-        <button class="btn btn-success" @click="saveToFile">💾 Enregistrer</button>
-        <button class="btn btn-info" @click="loadFromFile">📂 Charger</button>
-        <button class="btn btn-secondary" @click="printPage">🖨️ Imprimer</button>
-        <button class="btn btn-danger" @click="clearAll">🗑️ Effacer tout</button>
+        <button class="btn btn-success" @click="saveToFile">{{ translate('consignment.save') }}</button>
+        <button class="btn btn-info" @click="loadFromFile">{{ translate('consignment.load') }}</button>
+        <button class="btn btn-secondary" @click="printPage">{{ translate('consignment.print') }}</button>
+        <button class="btn btn-danger" @click="clearAll">{{ translate('consignment.clearAll') }}</button>
       </div>
 
       <footer>
-        <p>Document de sécurité - Procédure de consignation</p>
+        <p>{{ translate('consignment.footer') }}</p>
       </footer>
     </div>
 
