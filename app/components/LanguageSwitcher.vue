@@ -11,7 +11,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 
 const { locale } = useI18n()
@@ -19,11 +19,11 @@ const { locale } = useI18n()
 const availableLocales = [
   { code: 'en', name: 'English' },
   { code: 'fr', name: 'Français' }
-]
+] as const
 
 const currentLocale = computed(() => locale.value)
 
-const switchLanguage = (code) => {
+const switchLanguage = (code: string): void => {
   locale.value = code
   if (typeof window !== 'undefined') {
     localStorage.setItem('locale', code)

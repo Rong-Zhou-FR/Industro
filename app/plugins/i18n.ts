@@ -7,7 +7,7 @@ export default defineNuxtPlugin(({ vueApp }) => {
     legacy: false,
     globalInjection: true,
     locale: typeof window !== 'undefined' 
-      ? (localStorage.getItem('locale') || navigator.language.split('-')[0] || 'en')
+      ? (localStorage.getItem('locale') || navigator.language?.split('-')[0] || 'en')
       : 'en',
     fallbackLocale: 'en',
     messages: {
