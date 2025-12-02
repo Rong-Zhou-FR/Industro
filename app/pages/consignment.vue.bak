@@ -2,10 +2,9 @@
   <div class="consignment-page">
     <div class="container">
       <header>
-        <LanguageSwitcher />
-        <NuxtLink to="/" class="back-btn">{{ translate('common.backToHome') }}</NuxtLink>
-        <h1>{{ translate('consignment.title') }}</h1>
-        <p class="subtitle">{{ translate('consignment.subtitle') }}</p>
+        <NuxtLink to="/" class="back-btn">← Back to Home</NuxtLink>
+        <h1>📋 Procédure de Consignation</h1>
+        <p class="subtitle">Documentation de sécurité pour intervention</p>
       </header>
 
       <!-- Informations sur l'intervention -->
@@ -287,8 +286,6 @@
 <script setup>
 import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue'
 import { marked } from 'marked'
-
-const { t: translate } = useI18n()
 
 // Configure marked for security
 if (typeof marked !== 'undefined') {
