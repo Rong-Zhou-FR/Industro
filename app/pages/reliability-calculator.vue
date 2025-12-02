@@ -1,98 +1,99 @@
 <template>
   <div class="container">
     <div class="card fade-in">
-      <NuxtLink to="/" class="back-btn">← Back to Home</NuxtLink>
-      <h1 class="text-center">🔧 Reliability Calculator</h1>
+      <LanguageSwitcher />
+      <NuxtLink to="/" class="back-btn">{{ translate('common.backToHome') }}</NuxtLink>
+      <h1 class="text-center">{{ translate('reliability.title') }}</h1>
 
       <div v-if="errorMessage" class="error show">{{ errorMessage }}</div>
 
       <div class="form-section">
-        <h2>Input Parameters</h2>
+        <h2>{{ translate('reliability.inputParameters') }}</h2>
         <div class="grid grid-cols-2">
           <div class="form-group">
-            <label for="model">Model Selection:</label>
+            <label for="model">{{ translate('reliability.modelSelection') }}</label>
             <select id="model" v-model="model" class="form-control">
-              <option value="exponential">Exponential Model</option>
-              <option value="linear">Linear Model</option>
+              <option value="exponential">{{ translate('reliability.exponentialModel') }}</option>
+              <option value="linear">{{ translate('reliability.linearModel') }}</option>
             </select>
           </div>
           <div class="form-group">
-            <label for="N_0">Total Number of Pieces (N₀):</label>
+            <label for="N_0">{{ translate('reliability.totalPieces') }}</label>
             <input id="N_0" v-model.number="N_0" type="number" min="1" step="1" class="form-control">
           </div>
           <div class="form-group">
-            <label for="t">Time of Verification (t):</label>
+            <label for="t">{{ translate('reliability.timeVerification') }}</label>
             <input id="t" v-model.number="t" type="number" min="0" step="0.01" class="form-control">
           </div>
           <div class="form-group">
-            <label for="N_1">Pieces Still Functional (N₁):</label>
+            <label for="N_1">{{ translate('reliability.piecesFunctional') }}</label>
             <input id="N_1" v-model.number="N_1" type="number" min="0" step="1" class="form-control">
           </div>
         </div>
-        <button class="btn" @click="calculate">Calculate Reliability</button>
-        <button class="btn btn-secondary" @click="reset">Reset</button>
+        <button class="btn" @click="calculate">{{ translate('reliability.calculate') }}</button>
+        <button class="btn btn-secondary" @click="reset">{{ translate('reliability.reset') }}</button>
       </div>
 
       <div class="import-section">
-        <h3>Import Previous Results</h3>
+        <h3>{{ translate('reliability.importPreviousResults') }}</h3>
         <input ref="jsonFileInput" type="file" accept=".json" @change="handleFileSelect">
-        <button class="btn" @click="importJSON">Import JSON</button>
+        <button class="btn" @click="importJSON">{{ translate('reliability.importJSON') }}</button>
       </div>
 
       <div v-if="showResults" class="results">
-        <h2>Results</h2>
+        <h2>{{ translate('reliability.results') }}</h2>
         <div class="result-content">
           <div class="result-item">
-            <span class="result-label">Model:</span> {{ result.model.charAt(0).toUpperCase() + result.model.slice(1) }}
+            <span class="result-label">{{ translate('reliability.model') }}</span> {{ result.model.charAt(0).toUpperCase() + result.model.slice(1) }}
           </div>
           <div class="result-item">
-            <span class="result-label">Equation:</span>
+            <span class="result-label">{{ translate('reliability.equation') }}</span>
             <div ref="equationDisplay" class="equation-display"/>
           </div>
           <div v-if="result.lambda !== undefined" class="result-item">
-            <span class="result-label">Failure Rate (λ):</span> {{ result.lambda.toExponential(6) }}
+            <span class="result-label">{{ translate('reliability.failureRate') }}</span> {{ result.lambda.toExponential(6) }}
           </div>
           <div v-if="result.a !== undefined" class="result-item">
-            <span class="result-label">Slope (a):</span> {{ result.a.toExponential(6) }}
+            <span class="result-label">{{ translate('reliability.slope') }}</span> {{ result.a.toExponential(6) }}
           </div>
           <div class="result-item">
-            <span class="result-label">Reliability at verification time:</span> {{ result.reliability.toFixed(8) }}
+            <span class="result-label">{{ translate('reliability.reliabilityAtVerification') }}</span> {{ result.reliability.toFixed(8) }}
           </div>
         </div>
 
         <div class="chart-options">
-          <h3>Graph Options</h3>
+          <h3>{{ translate('reliability.graphOptions') }}</h3>
           <div class="scale-toggle">
             <label>
               <input v-model="scaleType" type="radio" value="linear" @change="updateChart">
-              Linear Scale
+              {{ translate('reliability.linearScale') }}
             </label>
             <label>
               <input v-model="scaleType" type="radio" value="logarithmic" @change="updateChart">
-              Logarithmic Scale
+              {{ translate('reliability.logarithmicScale') }}
             </label>
           </div>
 
-          <h4>Adjust Visible Region:</h4>
+          <h4>{{ translate('reliability.adjustVisibleRegion') }}</h4>
           <div class="range-inputs grid grid-cols-2">
             <div class="range-group">
-              <label for="t_start">Time Start (t_start):</label>
+              <label for="t_start">{{ translate('reliability.timeStart') }}</label>
               <input id="t_start" v-model.number="tStart" type="number" step="0.01" placeholder="Auto" class="form-control" @change="updateChart">
             </div>
             <div class="range-group">
-              <label for="t_end">Time End (t_end):</label>
+              <label for="t_end">{{ translate('reliability.timeEnd') }}</label>
               <input id="t_end" v-model.number="tEnd" type="number" step="0.01" placeholder="Auto" class="form-control" @change="updateChart">
             </div>
             <div class="range-group">
-              <label for="R_visible_start">Reliability Start:</label>
+              <label for="R_visible_start">{{ translate('reliability.reliabilityStart') }}</label>
               <input id="R_visible_start" v-model.number="rVisibleStart" type="number" min="0" max="1" step="0.001" placeholder="Auto" class="form-control" @change="updateChart">
             </div>
             <div class="range-group">
-              <label for="R_visible_end">Reliability End:</label>
+              <label for="R_visible_end">{{ translate('reliability.reliabilityEnd') }}</label>
               <input id="R_visible_end" v-model.number="rVisibleEnd" type="number" min="0" max="1" step="0.001" placeholder="Auto" class="form-control" @change="updateChart">
             </div>
           </div>
-          <button class="btn" style="margin-top: 15px;" @click="resetChartOptions">Reset Graph Options</button>
+          <button class="btn" style="margin-top: 15px;" @click="resetChartOptions">{{ translate('reliability.resetGraphOptions') }}</button>
         </div>
 
         <div class="chart-container">
@@ -100,8 +101,8 @@
         </div>
 
         <div class="export-buttons">
-          <button class="btn" @click="exportJSON">Export as JSON</button>
-          <button class="btn" @click="exportPDF">Export as PDF</button>
+          <button class="btn" @click="exportJSON">{{ translate('reliability.exportJSON') }}</button>
+          <button class="btn" @click="exportPDF">{{ translate('reliability.exportPDF') }}</button>
         </div>
       </div>
     </div>
@@ -110,6 +111,9 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t: translate } = useI18n()
 
 // Reactive state
 const model = ref('exponential')
@@ -151,17 +155,17 @@ const hideError = () => {
 
 const calculate = () => {
   if (!N_0.value || !t.value || N_1.value === null || N_1.value === undefined) {
-    showError('Please fill in all fields')
+    showError(translate('reliability.errors.fillAllFields'))
     return
   }
 
   if (N_1.value > N_0.value) {
-    showError('N₁ cannot be greater than N₀')
+    showError(translate('reliability.errors.n1GreaterThanN0'))
     return
   }
 
   if (N_0.value <= 0 || t.value <= 0) {
-    showError('N₀ and t must be positive')
+    showError(translate('reliability.errors.positiveValues'))
     return
   }
 
@@ -475,7 +479,7 @@ const importJSON = () => {
   const file = fileInput?.files?.[0]
 
   if (!file) {
-    showError('Please select a JSON file')
+    showError(translate('reliability.errors.selectJSONFile'))
     return
   }
 
@@ -503,7 +507,7 @@ const importJSON = () => {
       hideError()
     }
     catch (error) {
-      showError(`Error parsing JSON file: ${error.message}`)
+      showError(`${t('reliability.errors.parsingError')} ${error.message}`)
     }
   }
   reader.readAsText(file)
