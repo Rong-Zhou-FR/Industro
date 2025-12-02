@@ -790,6 +790,12 @@ interface SpecSheetData {
   }
 }
 
+// Default emergency numbers (France defaults)
+const defaultEmergencyNumbers = {
+  fireBrigade: '18',
+  samu: '15'
+}
+
 const data = reactive<SpecSheetData>({
   identification: {
     machineName: '',
@@ -839,8 +845,8 @@ const data = reactive<SpecSheetData>({
   emergency: {
     emergencyStop: '',
     firstAid: '',
-    fireBrigade: '18',
-    samu: '15',
+    fireBrigade: defaultEmergencyNumbers.fireBrigade,
+    samu: defaultEmergencyNumbers.samu,
     internalEscalation: ''
   }
 })
@@ -849,6 +855,9 @@ const showPreview = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
 const photoInput = ref<HTMLInputElement | null>(null)
 const diagramInput = ref<HTMLInputElement | null>(null)
+
+// Memoize jsPDF import to avoid repeated imports
+let jsPDFModule: typeof import('jspdf') | null = null
 
 const generatePreview = (): void => {
   if (!data.identification.machineName) {
@@ -955,8 +964,11 @@ const exportToPDF = async (): Promise<void> => {
     return
   }
 
-  // Dynamically import jsPDF only when needed (client-side only)
-  const { jsPDF } = await import('jspdf')
+  // Dynamically import jsPDF only when needed (client-side only) and memoize it
+  if (!jsPDFModule) {
+    jsPDFModule = await import('jspdf')
+  }
+  const { jsPDF } = jsPDFModule
   
   const pdf = new jsPDF('p', 'mm', 'a4')
   let yPosition = 20
@@ -1135,8 +1147,8 @@ const clearAllData = (): void => {
       emergency: {
         emergencyStop: '',
         firstAid: '',
-        fireBrigade: '18',
-        samu: '15',
+        fireBrigade: defaultEmergencyNumbers.fireBrigade,
+        samu: defaultEmergencyNumbers.samu,
         internalEscalation: ''
       }
     })
