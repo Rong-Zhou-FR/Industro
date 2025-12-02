@@ -53,6 +53,7 @@ const updateDateTime = () => {
 }
 
 onMounted(() => {
+  console.log('Translation for home.title:', t('home.title'))
   updateDateTime()
   timeInterval = setInterval(updateDateTime, 1000)
 })
