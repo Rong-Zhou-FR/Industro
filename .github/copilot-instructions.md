@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Industro is a comprehensive Nuxt.js web application for industrial engineering calculations and procedures, built by Rong ZHOU. The application provides tools for:
+Industro is a comprehensive Nuxt.js web application for industrial engineering calculations and procedures. The application provides tools for:
 - Reliability calculations (exponential and linear models)
 - Lockout/tagout (LOTO) procedures management
 - Bilingual support (English and French)
@@ -77,7 +77,16 @@ resources/             # Additional resources
 ### Client-Side Only Code
 
 - Always check for `typeof window !== 'undefined'` before accessing browser APIs
-- Use localStorage with browser checks: `if (typeof window !== 'undefined')`
+- Use localStorage with proper error handling:
+  ```typescript
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem('key', value)
+    } catch (e) {
+      console.error('localStorage not available:', e)
+    }
+  }
+  ```
 - This is important for SSR (Server-Side Rendering) compatibility
 
 ### Navigation
@@ -130,7 +139,7 @@ npm run generate
 - **Always run `npm run lint`** before committing changes
 - Fix linting errors with `npm run lint:fix` when possible
 - Address TypeScript errors and warnings
-- Current known issues to be aware of:
+- Common pitfalls to avoid:
   - Avoid `v-html` for XSS security (use sanitization if needed)
   - Avoid template variable shadowing (use unique variable names)
   - Remove unused variables and parameters
