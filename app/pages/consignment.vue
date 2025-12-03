@@ -18,7 +18,10 @@
           </div>
           <div class="form-group full-width">
             <label for="description">{{ translate('consignment.fields.description') }}</label>
-            <textarea id="description" v-model="data.info.description" class="form-control" rows="3" :placeholder="translate('consignment.fields.descriptionPlaceholder')"/>
+            <textarea id="description" v-model="data.info.description" class="form-control markdown-support" rows="3" :placeholder="translate('consignment.fields.descriptionPlaceholder')"/>
+            <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-if="descriptionPreview" class="markdown-preview" v-html="descriptionPreview"/>
           </div>
           <div class="form-group">
             <label for="date">{{ translate('consignment.fields.date') }}</label>
@@ -225,7 +228,10 @@
                 <input v-model="step.repere" type="text" :placeholder="`Repère ${index + 1}`">
               </div>
               <div class="col-instruction">
-                <textarea v-model="step.instruction" :placeholder="translate('consignment.fields.instructionPlaceholder')"/>
+                <textarea v-model="step.instruction" class="markdown-support" :placeholder="translate('consignment.fields.instructionPlaceholder')"/>
+                <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+                <!-- eslint-disable-next-line vue/no-v-html -->
+                <div v-if="step.instruction" class="instruction-preview" v-html="getInstructionPreview(step.instruction)"/>
               </div>
               <div class="col-photo">
                 <div class="photo-upload">
@@ -588,6 +594,17 @@ const analyseRisquesPreview = computed(() => {
   }
 })
 
+const descriptionPreview = computed(() => {
+  if (!data.info.description?.trim())
+    return ''
+  try {
+    return marked.parse(data.info.description)
+  }
+  catch {
+    return data.info.description
+  }
+})
+
 // Watch for changes to persist to localStorage
 watch(data, () => {
   saveToStorage()
@@ -751,6 +768,17 @@ const handlePhotoUpload = (event, stepId) => {
     }
   }
   reader.readAsDataURL(file)
+}
+
+const getInstructionPreview = (text) => {
+  if (!text?.trim())
+    return ''
+  try {
+    return marked.parse(text)
+  }
+  catch {
+    return text
+  }
 }
 
 const addImprovement = () => {
@@ -1638,7 +1666,8 @@ header h1 {
   font-family: 'Courier New', monospace;
 }
 
-.markdown-preview {
+.markdown-preview,
+.instruction-preview {
   margin-top: 10px;
   padding: 15px;
   background: white;
@@ -1646,21 +1675,30 @@ header h1 {
   border: 1px solid #e2e8f0;
 }
 
-.markdown-preview :deep(ul) {
+.instruction-preview {
+  font-size: 0.9em;
+  padding: 10px;
+}
+
+.markdown-preview :deep(ul),
+.instruction-preview :deep(ul) {
   margin-left: 20px;
   list-style-type: disc;
 }
 
-.markdown-preview :deep(ol) {
+.markdown-preview :deep(ol),
+.instruction-preview :deep(ol) {
   margin-left: 20px;
 }
 
-.markdown-preview :deep(strong) {
+.markdown-preview :deep(strong),
+.instruction-preview :deep(strong) {
   font-weight: 600;
   color: #1e293b;
 }
 
-.markdown-preview :deep(li) {
+.markdown-preview :deep(li),
+.instruction-preview :deep(li) {
   margin: 5px 0;
 }
 
