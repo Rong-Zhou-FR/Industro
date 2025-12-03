@@ -1,0 +1,34 @@
+{
+  "obligations": {
+    "helmet": "OBLIGATION-casque.jpg",
+    "soundproofHelmet": "OBLIGATION-casque-antibruit.jpg",
+    "glasses": "OBLIGATION-lunettes.jpg",
+    "gloves": "OBLIGATION-gants.jpg",
+    "shoes": "OBLIGATION-chaussures.jpg",
+    "harness": "OBLIGATION-harnais.jpg",
+    "visor": "OBLIGATION-visiere.jpg",
+    "respiratoryProtection": "OBLIGATION-protection-voies-espiratoires.jpg",
+    "suit": "OBLIGATION-combinaison.jpg",
+    "general": "OBLIGATION-general.jpg"
+  },
+  "dangers": {
+    "electricity": "DANGER-electricite.jpg",
+    "fall": "DANGER-chute.jpg",
+    "suspendedLoad": "DANGER-charge-suspendue.jpg",
+    "forklift": "DANGER-chariot.jpg",
+    "laser": "DANGER-laser.jpg",
+    "corrosiveProduct": "DANGER-produit-corrosif.jpg",
+    "explosiveProduct": "DANGER-produit-explosif.jpg",
+    "flammableProduct": "DANGER-produit-inflammable.jpg",
+    "toxicProduct": "DANGER-produit-toxique.jpg",
+    "biologicalRisk": "DANGER-risque-biologique.jpg",
+    "radioactivity": "DANGER-radioactivite.jpg",
+    "magneticField": "DANGER-champ-magnetique.jpg",
+    "tripping": "DANGER-trebuchement.jpg",
+    "general": "DANGER-general.jpg",
+    "explosiveAtmosphere": "DANGER-atmosphere-explosive.jpg",
+    "coldFrost": "DANGER-froid-gel.jpg",
+    "harmfulProduct": "DANGER-produit-nocif.jpg",
+    "nonIonizingRadiation": "DANGER-radiations-non-ionisantes.jpg"
+  }
+}

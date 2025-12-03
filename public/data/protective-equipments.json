@@ -1,0 +1,216 @@
+{
+  "ppe": {
+    "electrical": [
+      {
+        "id": "insulatingHelmet",
+        "en": "Insulating helmet",
+        "fr": "Casque isolant",
+        "pictogram": "helmet"
+      },
+      {
+        "id": "insulatingGlasses",
+        "en": "Insulating glasses",
+        "fr": "Lunettes isolantes",
+        "pictogram": "glasses"
+      },
+      {
+        "id": "insulatingGloves",
+        "en": "Insulating gloves",
+        "fr": "Gants isolants",
+        "pictogram": "gloves"
+      },
+      {
+        "id": "insulatingFaceShield",
+        "en": "Insulating face shield",
+        "fr": "Écran facial isolant",
+        "pictogram": "visor"
+      },
+      {
+        "id": "insulatingClothing",
+        "en": "Insulating clothing",
+        "fr": "Vêtements isolants",
+        "pictogram": "suit"
+      },
+      {
+        "id": "insulatingShoes",
+        "en": "Insulating shoes",
+        "fr": "Chaussures isolantes",
+        "pictogram": "shoes"
+      }
+    ],
+    "mechanical": [
+      {
+        "id": "constructionHelmet",
+        "en": "Construction helmet",
+        "fr": "Casque de chantier",
+        "pictogram": "helmet"
+      },
+      {
+        "id": "safetyGlasses",
+        "en": "Safety glasses",
+        "fr": "Lunettes de protection",
+        "pictogram": "glasses"
+      },
+      {
+        "id": "cutResistantGloves",
+        "en": "Cut-resistant gloves",
+        "fr": "Gants anti-coupure",
+        "pictogram": "gloves"
+      },
+      {
+        "id": "hearingProtection",
+        "en": "Hearing protection",
+        "fr": "Protections auditives",
+        "pictogram": "soundproofHelmet"
+      },
+      {
+        "id": "respiratoryMask",
+        "en": "Respiratory mask",
+        "fr": "Masque respiratoire",
+        "pictogram": "respiratoryProtection"
+      },
+      {
+        "id": "safetyHarness",
+        "en": "Safety harness",
+        "fr": "Harnais de sécurité",
+        "pictogram": "harness"
+      }
+    ],
+    "common": [
+      {
+        "id": "safetyShoes",
+        "en": "Safety shoes",
+        "fr": "Chaussures de sécurité",
+        "pictogram": "shoes"
+      },
+      {
+        "id": "highVisibilityVest",
+        "en": "High visibility vest",
+        "fr": "Gilet haute visibilité",
+        "pictogram": "general"
+      },
+      {
+        "id": "workClothing",
+        "en": "Work clothing",
+        "fr": "Vêtements de travail",
+        "pictogram": "suit"
+      },
+      {
+        "id": "handlingGloves",
+        "en": "Handling gloves",
+        "fr": "Gants de manutention",
+        "pictogram": "gloves"
+      }
+    ]
+  },
+  "cpe": {
+    "electrical": [
+      {
+        "id": "vatTestDevice",
+        "en": "VAT test device",
+        "fr": "Appareil de test VAT",
+        "pictogram": "general"
+      },
+      {
+        "id": "insulatingMat",
+        "en": "Insulating mat",
+        "fr": "Tapis isolant",
+        "pictogram": "general"
+      },
+      {
+        "id": "insulatingSheet",
+        "en": "Insulating sheet",
+        "fr": "Nappe isolante",
+        "pictogram": "general"
+      },
+      {
+        "id": "electricalLockoutPadlock",
+        "en": "Electrical lockout padlock",
+        "fr": "Cadenas de consignation électrique",
+        "pictogram": "general"
+      },
+      {
+        "id": "groundingDevice",
+        "en": "Grounding device",
+        "fr": "Dispositif de mise à la terre",
+        "pictogram": "general"
+      },
+      {
+        "id": "lockoutSign",
+        "en": "Lockout sign",
+        "fr": "Pancarte de consignation",
+        "pictogram": "general"
+      }
+    ],
+    "mechanical": [
+      {
+        "id": "machineGuard",
+        "en": "Machine guard",
+        "fr": "Protecteur de machine",
+        "pictogram": "general"
+      },
+      {
+        "id": "guardrail",
+        "en": "Guardrail",
+        "fr": "Garde-corps",
+        "pictogram": "general"
+      },
+      {
+        "id": "safetyNet",
+        "en": "Safety net",
+        "fr": "Filet de sécurité",
+        "pictogram": "general"
+      },
+      {
+        "id": "protectionBarrier",
+        "en": "Protection barrier",
+        "fr": "Barrières de protection",
+        "pictogram": "general"
+      },
+      {
+        "id": "lockoutBar",
+        "en": "Lockout bar",
+        "fr": "Barre de consignation",
+        "pictogram": "general"
+      }
+    ],
+    "common": [
+      {
+        "id": "lockoutLock",
+        "en": "Lockout lock",
+        "fr": "Serrure de consignation",
+        "pictogram": "general"
+      },
+      {
+        "id": "safetyBarrier",
+        "en": "Safety barrier",
+        "fr": "Barrières de sécurité",
+        "pictogram": "general"
+      },
+      {
+        "id": "safetySignage",
+        "en": "Safety signage",
+        "fr": "Signalisation de sécurité",
+        "pictogram": "general"
+      },
+      {
+        "id": "fireExtinguisher",
+        "en": "Fire extinguisher",
+        "fr": "Extincteur",
+        "pictogram": "general"
+      },
+      {
+        "id": "firstAidKit",
+        "en": "First aid kit",
+        "fr": "Trousse de premiers secours",
+        "pictogram": "general"
+      },
+      {
+        "id": "emergencyLighting",
+        "en": "Emergency lighting",
+        "fr": "Éclairage de sécurité",
+        "pictogram": "general"
+      }
+    ]
+  }
+}

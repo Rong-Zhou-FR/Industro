@@ -18,7 +18,10 @@
           </div>
           <div class="form-group full-width">
             <label for="description">{{ translate('consignment.fields.description') }}</label>
-            <textarea id="description" v-model="data.info.description" class="form-control" rows="3" :placeholder="translate('consignment.fields.descriptionPlaceholder')"/>
+            <textarea id="description" v-model="data.info.description" class="form-control markdown-support" rows="3" :placeholder="translate('consignment.fields.descriptionPlaceholder')"/>
+            <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-if="descriptionPreview" class="markdown-preview" v-html="descriptionPreview"/>
           </div>
           <div class="form-group">
             <label for="date">{{ translate('consignment.fields.date') }}</label>
@@ -123,6 +126,8 @@
               rows="10"
               :placeholder="translate('consignment.fields.riskAnalysisPlaceholder')"
             />
+            <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <div v-if="analyseRisquesPreview" class="markdown-preview" v-html="analyseRisquesPreview"/>
           </div>
         </div>
@@ -223,7 +228,10 @@
                 <input v-model="step.repere" type="text" :placeholder="`Repère ${index + 1}`">
               </div>
               <div class="col-instruction">
-                <textarea v-model="step.instruction" :placeholder="translate('consignment.fields.instructionPlaceholder')"/>
+                <textarea v-model="step.instruction" class="markdown-support" :placeholder="translate('consignment.fields.instructionPlaceholder')"/>
+                <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+                <!-- eslint-disable-next-line vue/no-v-html -->
+                <div v-if="step.instruction" class="instruction-preview" v-html="getInstructionPreview(step.instruction)"/>
               </div>
               <div class="col-photo">
                 <div class="photo-upload">
@@ -288,8 +296,10 @@
 import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue'
 import { marked } from 'marked'
 import { useI18n } from 'vue-i18n'
+import { useSafetyData } from '~/composables/useSafetyData'
 
 const { t: translate } = useI18n()
+const { loadData, dangers, protectiveEquipments, pictograms } = useSafetyData()
 
 // Configure marked for security
 if (typeof marked !== 'undefined') {
@@ -514,7 +524,7 @@ const preloadPictograms = async () => {
       const base64 = await loadImageAsBase64(`/resources/Pictogrammes_jpeg/OBLIGATION/${picto}`)
       pictograms[`OBLIGATION/${picto}`] = base64
     }
-    catch (e) {
+    catch {
       console.warn(`Could not load pictogram: ${picto}`)
     }
   }
@@ -525,7 +535,7 @@ const preloadPictograms = async () => {
       const base64 = await loadImageAsBase64(`/resources/Pictogrammes_jpeg/AVERTISSEMENT_DANGER/${picto}`)
       pictograms[`DANGER/${picto}`] = base64
     }
-    catch (e) {
+    catch {
       console.warn(`Could not load pictogram: ${picto}`)
     }
   }
@@ -583,6 +593,17 @@ const analyseRisquesPreview = computed(() => {
   }
   catch {
     return data.warnings.analyseRisques
+  }
+})
+
+const descriptionPreview = computed(() => {
+  if (!data.info.description?.trim())
+    return ''
+  try {
+    return marked.parse(data.info.description)
+  }
+  catch {
+    return data.info.description
   }
 })
 
@@ -749,6 +770,17 @@ const handlePhotoUpload = (event, stepId) => {
     }
   }
   reader.readAsDataURL(file)
+}
+
+const getInstructionPreview = (text) => {
+  if (!text?.trim())
+    return ''
+  try {
+    return marked.parse(text)
+  }
+  catch {
+    return text
+  }
 }
 
 const addImprovement = () => {
@@ -1259,6 +1291,17 @@ const handleClickOutside = (e) => {
 onMounted(() => {
   loadFromStorage()
   document.addEventListener('click', handleClickOutside)
+  
+  // Load safety data from JSON files for future use
+  // TODO: Replace hardcoded epiEpcSuggestions and dangerSuggestions with this data
+  loadData().then(() => {
+    console.log('✅ Safety data loaded:', {
+      dangersCount: dangers.value?.dangers.length,
+      ppeCategories: Object.keys(protectiveEquipments.value?.ppe || {}),
+      cpeCategories: Object.keys(protectiveEquipments.value?.cpe || {}),
+      pictogramKeys: Object.keys(pictograms.value || {})
+    })
+  })
 })
 
 onUnmounted(() => {
@@ -1636,7 +1679,8 @@ header h1 {
   font-family: 'Courier New', monospace;
 }
 
-.markdown-preview {
+.markdown-preview,
+.instruction-preview {
   margin-top: 10px;
   padding: 15px;
   background: white;
@@ -1644,21 +1688,30 @@ header h1 {
   border: 1px solid #e2e8f0;
 }
 
-.markdown-preview :deep(ul) {
+.instruction-preview {
+  font-size: 0.9em;
+  padding: 10px;
+}
+
+.markdown-preview :deep(ul),
+.instruction-preview :deep(ul) {
   margin-left: 20px;
   list-style-type: disc;
 }
 
-.markdown-preview :deep(ol) {
+.markdown-preview :deep(ol),
+.instruction-preview :deep(ol) {
   margin-left: 20px;
 }
 
-.markdown-preview :deep(strong) {
+.markdown-preview :deep(strong),
+.instruction-preview :deep(strong) {
   font-weight: 600;
   color: #1e293b;
 }
 
-.markdown-preview :deep(li) {
+.markdown-preview :deep(li),
+.instruction-preview :deep(li) {
   margin: 5px 0;
 }
 

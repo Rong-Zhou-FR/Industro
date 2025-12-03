@@ -1,0 +1,235 @@
+{
+  "dangers": [
+    {
+      "id": "electricalVoltage",
+      "en": "Electrical voltage",
+      "fr": "Tension électrique",
+      "color": "tension-electrique",
+      "requiresValue": true,
+      "unit": "V",
+      "pictogram": "electricity"
+    },
+    {
+      "id": "compressedAir",
+      "en": "Compressed air",
+      "fr": "Air comprimé",
+      "color": "air-comprime",
+      "requiresValue": true,
+      "unit": "bar",
+      "pictogram": "general"
+    },
+    {
+      "id": "hydraulicPressure",
+      "en": "Hydraulic pressure",
+      "fr": "Pression hydraulique",
+      "color": "pression-hydraulique",
+      "requiresValue": true,
+      "unit": "bar",
+      "pictogram": "general"
+    },
+    {
+      "id": "mechanicalInstability",
+      "en": "Mechanical instability",
+      "fr": "Instabilité mécanique",
+      "color": "instabilite-mecanique",
+      "requiresValue": false,
+      "pictogram": "general"
+    },
+    {
+      "id": "workingAtHeight",
+      "en": "Working at height",
+      "fr": "Travail en hauteur",
+      "color": "hauteur",
+      "requiresValue": true,
+      "unit": "m",
+      "pictogram": "fall"
+    },
+    {
+      "id": "electrocutionRisk",
+      "en": "Risk of electrocution",
+      "fr": "Risque d'électrocution",
+      "color": "tension-electrique",
+      "requiresValue": false,
+      "pictogram": "electricity"
+    },
+    {
+      "id": "fallRisk",
+      "en": "Risk of fall",
+      "fr": "Risque de chute",
+      "color": "hauteur",
+      "requiresValue": false,
+      "pictogram": "fall"
+    },
+    {
+      "id": "particleProjection",
+      "en": "Particle projection",
+      "fr": "Projection de particules",
+      "color": "instabilite-mecanique",
+      "requiresValue": false,
+      "pictogram": "general"
+    },
+    {
+      "id": "crushing",
+      "en": "Crushing",
+      "fr": "Écrasement",
+      "color": "instabilite-mecanique",
+      "requiresValue": false,
+      "pictogram": "suspendedLoad"
+    },
+    {
+      "id": "cutting",
+      "en": "Cutting",
+      "fr": "Coupure",
+      "color": "instabilite-mecanique",
+      "requiresValue": false,
+      "pictogram": "general"
+    },
+    {
+      "id": "highTemperature",
+      "en": "High temperature",
+      "fr": "Température élevée",
+      "color": "autre",
+      "requiresValue": true,
+      "unit": "°C",
+      "pictogram": "general"
+    },
+    {
+      "id": "chemicalProduct",
+      "en": "Chemical product",
+      "fr": "Produit chimique",
+      "color": "autre",
+      "requiresValue": false,
+      "pictogram": "harmfulProduct"
+    },
+    {
+      "id": "radiation",
+      "en": "Radiation",
+      "fr": "Rayonnement",
+      "color": "autre",
+      "requiresValue": false,
+      "pictogram": "nonIonizingRadiation"
+    },
+    {
+      "id": "excessiveNoise",
+      "en": "Excessive noise",
+      "fr": "Bruit excessif",
+      "color": "autre",
+      "requiresValue": true,
+      "unit": "dB",
+      "pictogram": "general"
+    },
+    {
+      "id": "confinedSpace",
+      "en": "Confined space",
+      "fr": "Espace confiné",
+      "color": "autre",
+      "requiresValue": false,
+      "pictogram": "general"
+    },
+    {
+      "id": "explosiveAtmosphere",
+      "en": "Explosive atmosphere",
+      "fr": "Atmosphère explosive",
+      "color": "autre",
+      "requiresValue": false,
+      "pictogram": "explosiveAtmosphere"
+    },
+    {
+      "id": "coldFrost",
+      "en": "Cold / Frost",
+      "fr": "Froid / Gel",
+      "color": "autre",
+      "requiresValue": true,
+      "unit": "°C",
+      "pictogram": "coldFrost"
+    },
+    {
+      "id": "suspendedLoad",
+      "en": "Suspended load",
+      "fr": "Charge suspendue",
+      "color": "instabilite-mecanique",
+      "requiresValue": false,
+      "pictogram": "suspendedLoad"
+    },
+    {
+      "id": "forklift",
+      "en": "Forklift",
+      "fr": "Chariot élévateur",
+      "color": "instabilite-mecanique",
+      "requiresValue": false,
+      "pictogram": "forklift"
+    },
+    {
+      "id": "laser",
+      "en": "Laser",
+      "fr": "Laser",
+      "color": "autre",
+      "requiresValue": false,
+      "pictogram": "laser"
+    },
+    {
+      "id": "corrosiveProduct",
+      "en": "Corrosive product",
+      "fr": "Produit corrosif",
+      "color": "autre",
+      "requiresValue": false,
+      "pictogram": "corrosiveProduct"
+    },
+    {
+      "id": "explosiveProduct",
+      "en": "Explosive product",
+      "fr": "Produit explosif",
+      "color": "autre",
+      "requiresValue": false,
+      "pictogram": "explosiveProduct"
+    },
+    {
+      "id": "flammableProduct",
+      "en": "Flammable product",
+      "fr": "Produit inflammable",
+      "color": "autre",
+      "requiresValue": false,
+      "pictogram": "flammableProduct"
+    },
+    {
+      "id": "toxicProduct",
+      "en": "Toxic product",
+      "fr": "Produit toxique",
+      "color": "autre",
+      "requiresValue": false,
+      "pictogram": "toxicProduct"
+    },
+    {
+      "id": "biologicalRisk",
+      "en": "Biological risk",
+      "fr": "Risque biologique",
+      "color": "autre",
+      "requiresValue": false,
+      "pictogram": "biologicalRisk"
+    },
+    {
+      "id": "radioactivity",
+      "en": "Radioactivity",
+      "fr": "Radioactivité",
+      "color": "autre",
+      "requiresValue": false,
+      "pictogram": "radioactivity"
+    },
+    {
+      "id": "magneticField",
+      "en": "Magnetic field",
+      "fr": "Champ magnétique",
+      "color": "autre",
+      "requiresValue": false,
+      "pictogram": "magneticField"
+    },
+    {
+      "id": "tripping",
+      "en": "Tripping",
+      "fr": "Trébuchement",
+      "color": "hauteur",
+      "requiresValue": false,
+      "pictogram": "tripping"
+    }
+  ]
+}
