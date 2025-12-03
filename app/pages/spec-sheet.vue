@@ -234,44 +234,22 @@
         <h2>{{ t('specSheet.sections.safety') }}</h2>
         <div class="form-grid">
           <div class="form-group full-width">
-            <label>{{ t('specSheet.safety.requiredPPE') }}</label>
-            <div class="ppe-selector">
-              <div class="ppe-checkboxes">
-                <div
-                  v-for="key in ppeTypeKeys"
-                  :key="key"
-                  class="checkbox-item"
-                >
-                  <input
-                    :id="'required-' + key"
-                    v-model="data.safety.requiredPPE"
-                    type="checkbox"
-                    :value="key"
-                  >
-                  <label :for="'required-' + key">{{ t(`specSheet.safety.ppeTypes.${key}`) }}</label>
-                </div>
-              </div>
-            </div>
+            <SafetySuggestionInput
+              v-model="data.safety.requiredPPE"
+              :suggestions="ppeSuggestions"
+              :label="t('specSheet.safety.requiredPPE')"
+              :placeholder="t('specSheet.safety.ppePlaceholder')"
+              :group-by="groupPPEByCategory"
+            />
           </div>
           <div class="form-group full-width">
-            <label>{{ t('specSheet.safety.prohibitedPPE') }}</label>
-            <div class="ppe-selector">
-              <div class="ppe-checkboxes">
-                <div
-                  v-for="key in ppeTypeKeys"
-                  :key="key"
-                  class="checkbox-item"
-                >
-                  <input
-                    :id="'prohibited-' + key"
-                    v-model="data.safety.prohibitedPPE"
-                    type="checkbox"
-                    :value="key"
-                  >
-                  <label :for="'prohibited-' + key">{{ t(`specSheet.safety.ppeTypes.${key}`) }}</label>
-                </div>
-              </div>
-            </div>
+            <SafetySuggestionInput
+              v-model="data.safety.prohibitedPPE"
+              :suggestions="ppeSuggestions"
+              :label="t('specSheet.safety.prohibitedPPE')"
+              :placeholder="t('specSheet.safety.ppePlaceholder')"
+              :group-by="groupPPEByCategory"
+            />
           </div>
         </div>
       </section>
@@ -318,24 +296,13 @@
         <h2>{{ t('specSheet.sections.risks') }}</h2>
         <div class="form-grid">
           <div class="form-group full-width">
-            <label>{{ t('specSheet.risks.identifiedRisks') }}</label>
-            <div class="risk-selector">
-              <div class="risk-checkboxes">
-                <div
-                  v-for="key in riskTypeKeys"
-                  :key="key"
-                  class="checkbox-item"
-                >
-                  <input
-                    :id="'risk-' + key"
-                    v-model="data.risks.identifiedRisks"
-                    type="checkbox"
-                    :value="key"
-                  >
-                  <label :for="'risk-' + key">{{ t(`specSheet.risks.riskTypes.${key}`) }}</label>
-                </div>
-              </div>
-            </div>
+            <SafetySuggestionInput
+              v-model="data.risks.identifiedRisks"
+              :suggestions="riskSuggestions"
+              :label="t('specSheet.risks.identifiedRisks')"
+              :placeholder="t('specSheet.risks.riskPlaceholder')"
+              :group-by="groupRiskByColor"
+            />
           </div>
           <div class="form-group full-width">
             <label for="residualRisks">{{ t('specSheet.risks.residualRisks') }}</label>
@@ -700,40 +667,70 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useSafetyData } from '~/composables/useSafetyData'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
+const { loadData, dangers, protectiveEquipments } = useSafetyData()
 
-// PPE and Risk types (will be translated in the component)
-const ppeTypeKeys = [
-  'safetyGlasses',
-  'hearingProtection',
-  'safetyShoes',
-  'hardHat',
-  'safetyGloves',
-  'respirator',
-  'faceMask',
-  'safetyVest',
-  'fallProtection',
-  'cutResistantGloves',
-  'looseClothing',
-  'jewelry',
-  'longHair'
-]
+// PPE Suggestions - dynamically built from protectiveEquipments data
+const ppeSuggestions = computed(() => {
+  if (!protectiveEquipments.value?.ppe) return []
+  
+  const lang = locale.value === 'fr' ? 'fr' : 'en'
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const allPPE: any[] = []
+  
+  // Collect all PPE from all categories
+  const categories = ['electrical', 'mechanical', 'common'] as const
+  categories.forEach(category => {
+    const items = protectiveEquipments.value.ppe[category] || []
+    items.forEach(item => {
+      allPPE.push({
+        id: item.id,
+        name: item[lang],
+        type: 'PPE',
+        category: category,
+        badges: [
+          { text: 'PPE', class: 'badge-ppe' },
+          { text: category, class: `badge-${category}` }
+        ]
+      })
+    })
+  })
+  
+  return allPPE
+})
 
-const riskTypeKeys = [
-  'cuts',
-  'crushing',
-  'noise',
-  'chemicalExposure',
-  'electricalShock',
-  'burns',
-  'falls',
-  'projections',
-  'entanglement',
-  'explosion'
-]
+// Risk/Danger Suggestions - dynamically built from dangers data
+const riskSuggestions = computed(() => {
+  if (!dangers.value) return []
+  
+  const lang = locale.value === 'fr' ? 'fr' : 'en'
+  
+  return dangers.value.dangers.map(d => ({
+    id: d.id,
+    name: d[lang],
+    color: d.color,
+    badges: d.requiresValue 
+      ? [{ text: `${d.unit}`, class: `badge-${d.color}` }]
+      : []
+  }))
+})
+
+// Helper functions for grouping
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const groupPPEByCategory = (item: any) => ({
+  key: `PPE-${item.category}`,
+  label: `PPE - ${item.category}`
+})
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const groupRiskByColor = (item: any) => ({
+  key: `risk-${item.color}`,
+  label: item.color.replace(/-/g, ' ')
+})
 
 interface SpecSheetData {
   identification: {
@@ -883,12 +880,18 @@ const getSafetyPointsArray = (): string[] => {
     .filter(point => point.trim() !== '')
 }
 
-const getPPELabel = (key: string): string => {
-  return t(`specSheet.safety.ppeTypes.${key}`)
+const getPPELabel = (item: unknown): string => {
+  // If it's an object with a name property, return the name
+  // Otherwise treat it as a string (for backward compatibility)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return typeof item === 'object' && item !== null && 'name' in item ? (item as any).name : t(`specSheet.safety.ppeTypes.${item}`)
 }
 
-const getRiskLabel = (key: string): string => {
-  return t(`specSheet.risks.riskTypes.${key}`)
+const getRiskLabel = (item: unknown): string => {
+  // If it's an object with a name property, return the name
+  // Otherwise treat it as a string (for backward compatibility)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return typeof item === 'object' && item !== null && 'name' in item ? (item as any).name : t(`specSheet.risks.riskTypes.${item}`)
 }
 
 const triggerPhotoUpload = (): void => {
@@ -1154,6 +1157,12 @@ const clearAllData = (): void => {
     })
   }
 }
+
+// Load safety data on mount
+onMounted(() => {
+  loadData()
+})
+
 </script>
 
 <style scoped>
