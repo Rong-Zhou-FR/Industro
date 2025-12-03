@@ -296,8 +296,10 @@
 import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue'
 import { marked } from 'marked'
 import { useI18n } from 'vue-i18n'
+import { useSafetyData } from '~/composables/useSafetyData'
 
 const { t: translate } = useI18n()
+const { loadData, dangers, protectiveEquipments, pictograms } = useSafetyData()
 
 // Configure marked for security
 if (typeof marked !== 'undefined') {
@@ -1289,6 +1291,17 @@ const handleClickOutside = (e) => {
 onMounted(() => {
   loadFromStorage()
   document.addEventListener('click', handleClickOutside)
+  
+  // Load safety data from JSON files for future use
+  // TODO: Replace hardcoded epiEpcSuggestions and dangerSuggestions with this data
+  loadData().then(() => {
+    console.log('✅ Safety data loaded:', {
+      dangersCount: dangers.value?.dangers.length,
+      ppeCategories: Object.keys(protectiveEquipments.value?.ppe || {}),
+      cpeCategories: Object.keys(protectiveEquipments.value?.cpe || {}),
+      pictogramKeys: Object.keys(pictograms.value || {})
+    })
+  })
 })
 
 onUnmounted(() => {
