@@ -354,20 +354,22 @@ let stepCounter = 0
 
 // PPE/CPE Suggestions - dynamically built from protectiveEquipments data
 const ppeCPESuggestions = computed(() => {
-  if (!protectiveEquipments.value) return { PPE: {}, CPE: {} }
+  if (!protectiveEquipments.value?.ppe || !protectiveEquipments.value?.cpe) {
+    return { PPE: {}, CPE: {} }
+  }
   
   const lang = locale.value === 'fr' ? 'fr' : 'en'
   
   return {
     PPE: {
-      electrical: protectiveEquipments.value.ppe.electrical.map(e => e[lang]),
-      mechanical: protectiveEquipments.value.ppe.mechanical.map(e => e[lang]),
-      common: protectiveEquipments.value.ppe.common.map(e => e[lang])
+      electrical: (protectiveEquipments.value.ppe.electrical || []).map(e => e[lang]),
+      mechanical: (protectiveEquipments.value.ppe.mechanical || []).map(e => e[lang]),
+      common: (protectiveEquipments.value.ppe.common || []).map(e => e[lang])
     },
     CPE: {
-      electrical: protectiveEquipments.value.cpe.electrical.map(e => e[lang]),
-      mechanical: protectiveEquipments.value.cpe.mechanical.map(e => e[lang]),
-      common: protectiveEquipments.value.cpe.common.map(e => e[lang])
+      electrical: (protectiveEquipments.value.cpe.electrical || []).map(e => e[lang]),
+      mechanical: (protectiveEquipments.value.cpe.mechanical || []).map(e => e[lang]),
+      common: (protectiveEquipments.value.cpe.common || []).map(e => e[lang])
     }
   }
 })
