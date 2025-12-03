@@ -18,6 +18,9 @@
         <NuxtLink to="/consignment" class="btn">
           {{ t('home.consignmentProcedure') }}
         </NuxtLink>
+        <NuxtLink to="/spec-sheet" class="btn">
+          {{ t('home.specificationSheet') }}
+        </NuxtLink>
       </nav>
     </div>
   </div>

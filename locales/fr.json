@@ -8,6 +8,7 @@
     "description": "Un outil complet pour les calculs d'ingénierie industrielle",
     "reliabilityCalculator": "🔧 Calculateur de Fiabilité",
     "consignmentProcedure": "📋 Procédure de Consignation",
+    "specificationSheet": "📄 Générateur de Fiche Technique",
     "days": {
       "sunday": "Dimanche", "monday": "Lundi", "tuesday": "Mardi", "wednesday": "Mercredi",
       "thursday": "Jeudi", "friday": "Vendredi", "saturday": "Samedi"
@@ -129,6 +130,153 @@
       "typeNational": "Normes nationales",
       "typeInternational": "Normes internationales",
       "removeStep": "Supprimer l'étape"
+    }
+  },
+  "specSheet": {
+    "title": "📄 Générateur de Fiche Technique",
+    "subtitle": "Documentation Machine Conforme INRS ED 126",
+    "generateSheet": "Générer la Fiche Technique",
+    "preview": "Aperçu",
+    "exportPDF": "Exporter en PDF",
+    "exportJSON": "Exporter en JSON",
+    "importJSON": "Importer JSON",
+    "clearAll": "Effacer Tout",
+    "sections": {
+      "identification": "🏷️ Identification de la Machine",
+      "visuals": "📷 Visuels & Points de Sécurité",
+      "technical": "⚙️ Caractéristiques Techniques",
+      "safety": "🦺 Sécurité & EPI",
+      "operations": "🔧 Opérations",
+      "risks": "⚠️ Risques & Dangers",
+      "prevention": "🛡️ Mesures Préventives",
+      "qualification": "👤 Qualification & Autorisation",
+      "emergency": "🚨 Procédures d'Urgence"
+    },
+    "identification": {
+      "machineName": "Nom de la Machine :",
+      "machineNamePlaceholder": "ex. : Fraiseuse CNC",
+      "brand": "Marque/Type :",
+      "brandPlaceholder": "ex. : Haas VF-2",
+      "serialNumber": "Numéro de Série :",
+      "serialNumberPlaceholder": "ex. : SN123456",
+      "commissioningDate": "Date de Mise en Service :",
+      "sheetVersion": "Version de la Fiche :",
+      "sheetVersionPlaceholder": "ex. : v1.0",
+      "sheetDate": "Date de la Fiche :"
+    },
+    "visuals": {
+      "uploadPhoto": "Télécharger Photo Machine :",
+      "uploadDiagram": "Télécharger Schéma (Optionnel) :",
+      "safetyPoints": "Points de Sécurité (un par ligne) :",
+      "safetyPointsPlaceholder": "ex. :\nBouton d'arrêt d'urgence - Panneau avant\nProtecteur de sécurité - Côté gauche\nZone d'opération - Centre\nPanneau de contrôle - Côté droit",
+      "changePhoto": "Changer la Photo",
+      "changeDiagram": "Changer le Schéma",
+      "addPhoto": "Ajouter Photo",
+      "addDiagram": "Ajouter Schéma"
+    },
+    "technical": {
+      "dimensions": "Dimensions (L x l x H) :",
+      "dimensionsPlaceholder": "ex. : 2000 x 1500 x 2200 mm",
+      "weight": "Poids :",
+      "weightPlaceholder": "ex. : 3500 kg",
+      "speedRanges": "Plages de Vitesse :",
+      "speedRangesPlaceholder": "ex. : 100-10000 tr/min",
+      "powerSupply": "Alimentation Électrique :",
+      "powerSupplyPlaceholder": "ex. : 380V triphasé, 50Hz",
+      "noiseLevel": "Niveau Sonore :",
+      "noiseLevelPlaceholder": "ex. : 85 dB(A)",
+      "operatingLimits": "Limites d'Exploitation :",
+      "operatingLimitsPlaceholder": "Matériaux autorisés, capacité max, etc.",
+      "additionalSpecs": "Spécifications Supplémentaires :",
+      "additionalSpecsPlaceholder": "Autres détails techniques..."
+    },
+    "safety": {
+      "requiredPPE": "EPI Obligatoires :",
+      "prohibitedPPE": "EPI Interdits :",
+      "ppePlaceholder": "Sélectionner ou ajouter des EPI...",
+      "addPPE": "Ajouter EPI",
+      "ppeTypes": {
+        "safetyGlasses": "Lunettes de Protection",
+        "hearingProtection": "Protection Auditive",
+        "safetyShoes": "Chaussures de Sécurité",
+        "hardHat": "Casque de Protection",
+        "safetyGloves": "Gants de Sécurité",
+        "respirator": "Appareil Respiratoire",
+        "faceMask": "Masque Facial",
+        "safetyVest": "Gilet de Sécurité",
+        "fallProtection": "Protection Antichute",
+        "cutResistantGloves": "Gants Anti-Coupure",
+        "looseClothing": "Vêtements Amples",
+        "jewelry": "Bijoux",
+        "longHair": "Cheveux Longs (non attachés)"
+      }
+    },
+    "operations": {
+      "normalOperation": "Étapes d'Opération Normale :",
+      "normalOperationPlaceholder": "1. Procédure de démarrage\n2. Procédure d'arrêt\n3. Procédure d'alimentation\n4. Procédure d'évacuation",
+      "adjustments": "Procédures de Réglage :",
+      "adjustmentsPlaceholder": "ex. : Changement de lame, réglages de vitesse...",
+      "maintenance": "Maintenance de Premier Niveau :",
+      "maintenancePlaceholder": "Tâches de maintenance de base que l'opérateur peut effectuer..."
+    },
+    "risks": {
+      "identifiedRisks": "Risques Identifiés :",
+      "residualRisks": "Risques Résiduels :",
+      "addRisk": "Ajouter Risque",
+      "riskPlaceholder": "Décrire le risque...",
+      "riskTypes": {
+        "cuts": "Coupures",
+        "crushing": "Écrasement",
+        "noise": "Bruit",
+        "chemicalExposure": "Exposition Chimique",
+        "electricalShock": "Choc Électrique",
+        "burns": "Brûlures",
+        "falls": "Chutes",
+        "projections": "Projections",
+        "entanglement": "Happement",
+        "explosion": "Explosion"
+      }
+    },
+    "prevention": {
+      "instructions": "Consignes de Sécurité :",
+      "instructionsPlaceholder": "Procédures de sécurité à suivre...",
+      "toDo": "À Faire :",
+      "toDoPlaceholder": "Actions de sécurité requises...",
+      "toAvoid": "À Éviter :",
+      "toAvoidPlaceholder": "Actions à éviter..."
+    },
+    "qualification": {
+      "authorizedPersonnel": "Personnel Autorisé :",
+      "authorizedPersonnelPlaceholder": "ex. : Opérateurs certifiés, personnel de maintenance",
+      "requiredTraining": "Formation Requise :",
+      "requiredTrainingPlaceholder": "ex. : Formation sécurité machine, sensibilisation aux dangers",
+      "certifications": "Certifications Requises :",
+      "certificationsPlaceholder": "ex. : Certification opérateur, permis chariot élévateur"
+    },
+    "emergency": {
+      "emergencyStop": "Procédure d'Arrêt d'Urgence :",
+      "emergencyStopPlaceholder": "Comment effectuer l'arrêt d'urgence...",
+      "firstAid": "Contact Premiers Secours :",
+      "firstAidPlaceholder": "Poste ou numéro de téléphone",
+      "fireBrigade": "Pompiers :",
+      "fireBrigadePlaceholder": "18 (France) ou numéro local",
+      "samu": "SAMU/Ambulance :",
+      "samuPlaceholder": "15 (France) ou numéro local",
+      "internalEscalation": "Escalade Interne :",
+      "internalEscalationPlaceholder": "Contacts superviseur, responsable sécurité..."
+    },
+    "pdf": {
+      "title": "Fiche Technique Machine",
+      "subtitle": "Documentation Conforme INRS ED 126",
+      "version": "Version :",
+      "date": "Date :",
+      "page": "Page"
+    },
+    "errors": {
+      "fillMachineName": "Veuillez saisir le nom de la machine",
+      "selectJSONFile": "Veuillez sélectionner un fichier JSON",
+      "parsingError": "Erreur lors de l'analyse du fichier JSON :",
+      "invalidFormat": "Format de fichier invalide"
     }
   }
 }

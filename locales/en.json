@@ -8,6 +8,7 @@
     "description": "A comprehensive tool for industrial engineering calculations",
     "reliabilityCalculator": "🔧 Reliability Calculator",
     "consignmentProcedure": "📋 Consignment Procedure",
+    "specificationSheet": "📄 Specification Sheet Generator",
     "days": {
       "sunday": "Sunday", "monday": "Monday", "tuesday": "Tuesday", "wednesday": "Wednesday",
       "thursday": "Thursday", "friday": "Friday", "saturday": "Saturday"
@@ -129,6 +130,153 @@
       "typeNational": "National standards",
       "typeInternational": "International standards",
       "removeStep": "Remove step"
+    }
+  },
+  "specSheet": {
+    "title": "📄 Specification Sheet Generator",
+    "subtitle": "INRS ED 126 Compliant Machine Documentation",
+    "generateSheet": "Generate Specification Sheet",
+    "preview": "Preview",
+    "exportPDF": "Export as PDF",
+    "exportJSON": "Export as JSON",
+    "importJSON": "Import JSON",
+    "clearAll": "Clear All",
+    "sections": {
+      "identification": "🏷️ Machine Identification",
+      "visuals": "📷 Visuals & Safety Points",
+      "technical": "⚙️ Technical Characteristics",
+      "safety": "🦺 Safety & PPE",
+      "operations": "🔧 Operations",
+      "risks": "⚠️ Risks & Dangers",
+      "prevention": "🛡️ Preventive Measures",
+      "qualification": "👤 Qualification & Authorization",
+      "emergency": "🚨 Emergency Procedures"
+    },
+    "identification": {
+      "machineName": "Machine Name:",
+      "machineNamePlaceholder": "e.g., CNC Milling Machine",
+      "brand": "Brand/Type:",
+      "brandPlaceholder": "e.g., Haas VF-2",
+      "serialNumber": "Serial Number:",
+      "serialNumberPlaceholder": "e.g., SN123456",
+      "commissioningDate": "Commissioning Date:",
+      "sheetVersion": "Sheet Version:",
+      "sheetVersionPlaceholder": "e.g., v1.0",
+      "sheetDate": "Sheet Date:"
+    },
+    "visuals": {
+      "uploadPhoto": "Upload Machine Photo:",
+      "uploadDiagram": "Upload Diagram (Optional):",
+      "safetyPoints": "Safety Points (one per line):",
+      "safetyPointsPlaceholder": "e.g.,\nEmergency stop button - Front panel\nSafety guard - Left side\nOperation zone - Center\nControl panel - Right side",
+      "changePhoto": "Change Photo",
+      "changeDiagram": "Change Diagram",
+      "addPhoto": "Add Photo",
+      "addDiagram": "Add Diagram"
+    },
+    "technical": {
+      "dimensions": "Dimensions (L x W x H):",
+      "dimensionsPlaceholder": "e.g., 2000 x 1500 x 2200 mm",
+      "weight": "Weight:",
+      "weightPlaceholder": "e.g., 3500 kg",
+      "speedRanges": "Speed Ranges:",
+      "speedRangesPlaceholder": "e.g., 100-10000 RPM",
+      "powerSupply": "Power Supply:",
+      "powerSupplyPlaceholder": "e.g., 380V 3-phase, 50Hz",
+      "noiseLevel": "Noise Level:",
+      "noiseLevelPlaceholder": "e.g., 85 dB(A)",
+      "operatingLimits": "Operating Limits:",
+      "operatingLimitsPlaceholder": "Materials allowed, max capacity, etc.",
+      "additionalSpecs": "Additional Specifications:",
+      "additionalSpecsPlaceholder": "Any other technical details..."
+    },
+    "safety": {
+      "requiredPPE": "Required PPE:",
+      "prohibitedPPE": "Prohibited PPE:",
+      "ppePlaceholder": "Select or add PPE items...",
+      "addPPE": "Add PPE",
+      "ppeTypes": {
+        "safetyGlasses": "Safety Glasses",
+        "hearingProtection": "Hearing Protection",
+        "safetyShoes": "Safety Shoes",
+        "hardHat": "Hard Hat",
+        "safetyGloves": "Safety Gloves",
+        "respirator": "Respirator",
+        "faceMask": "Face Mask",
+        "safetyVest": "Safety Vest",
+        "fallProtection": "Fall Protection",
+        "cutResistantGloves": "Cut-Resistant Gloves",
+        "looseClothing": "Loose Clothing",
+        "jewelry": "Jewelry",
+        "longHair": "Long Hair (untied)"
+      }
+    },
+    "operations": {
+      "normalOperation": "Normal Operation Steps:",
+      "normalOperationPlaceholder": "1. Start procedure\n2. Stop procedure\n3. Feeding procedure\n4. Evacuation procedure",
+      "adjustments": "Adjustment Procedures:",
+      "adjustmentsPlaceholder": "e.g., Blade change, speed settings...",
+      "maintenance": "First-Level Maintenance:",
+      "maintenancePlaceholder": "Basic maintenance tasks operator can perform..."
+    },
+    "risks": {
+      "identifiedRisks": "Identified Risks:",
+      "residualRisks": "Residual Risks:",
+      "addRisk": "Add Risk",
+      "riskPlaceholder": "Describe the risk...",
+      "riskTypes": {
+        "cuts": "Cuts",
+        "crushing": "Crushing",
+        "noise": "Noise",
+        "chemicalExposure": "Chemical Exposure",
+        "electricalShock": "Electrical Shock",
+        "burns": "Burns",
+        "falls": "Falls",
+        "projections": "Projections",
+        "entanglement": "Entanglement",
+        "explosion": "Explosion"
+      }
+    },
+    "prevention": {
+      "instructions": "Safety Instructions:",
+      "instructionsPlaceholder": "Safety procedures to follow...",
+      "toDo": "To Do:",
+      "toDoPlaceholder": "Required safety actions...",
+      "toAvoid": "To Avoid:",
+      "toAvoidPlaceholder": "Actions to avoid..."
+    },
+    "qualification": {
+      "authorizedPersonnel": "Authorized Personnel:",
+      "authorizedPersonnelPlaceholder": "e.g., Certified machine operators, maintenance staff",
+      "requiredTraining": "Required Training:",
+      "requiredTrainingPlaceholder": "e.g., Machine safety training, hazard awareness course",
+      "certifications": "Required Certifications:",
+      "certificationsPlaceholder": "e.g., Operator certification, forklift license"
+    },
+    "emergency": {
+      "emergencyStop": "Emergency Stop Procedure:",
+      "emergencyStopPlaceholder": "How to perform emergency stop...",
+      "firstAid": "First Aid Contact:",
+      "firstAidPlaceholder": "Extension or phone number",
+      "fireBrigade": "Fire Brigade:",
+      "fireBrigadePlaceholder": "18 (France) or local number",
+      "samu": "SAMU/Ambulance:",
+      "samuPlaceholder": "15 (France) or local number",
+      "internalEscalation": "Internal Escalation:",
+      "internalEscalationPlaceholder": "Supervisor, safety manager contacts..."
+    },
+    "pdf": {
+      "title": "Machine Specification Sheet",
+      "subtitle": "INRS ED 126 Compliant Documentation",
+      "version": "Version:",
+      "date": "Date:",
+      "page": "Page"
+    },
+    "errors": {
+      "fillMachineName": "Please enter the machine name",
+      "selectJSONFile": "Please select a JSON file",
+      "parsingError": "Error parsing JSON file:",
+      "invalidFormat": "Invalid file format"
     }
   }
 }
