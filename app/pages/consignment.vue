@@ -41,24 +41,24 @@
           </div>
           <div class="form-group full-width">
             <label>{{ translate('consignment.fields.epiEpc') }}</label>
-            <div class="epi-epc-input-container">
+            <div class="ppe-cpe-input-container">
               <input
-                v-model="epiEpcQuery"
+                v-model="ppeCPEQuery"
                 type="text"
                 class="form-control"
                 :placeholder="translate('consignment.fields.epiEpcPlaceholder')"
-                @input="handleEpiEpcInput"
-                @keydown.enter.prevent="addCustomEpiEpc"
+                @input="handlePPECPEInput"
+                @keydown.enter.prevent="addCustomPPECPE"
                 @keydown.escape="hideSuggestions"
               >
-              <div v-if="showEpiEpcSuggestions" class="suggestions-dropdown">
-                <template v-for="(group, key) in groupedEpiEpcMatches" :key="key">
+              <div v-if="showPPECPESuggestions" class="suggestions-dropdown">
+                <template v-for="(group, key) in groupedPPECPEMatches" :key="key">
                   <div class="suggestion-category">{{ group.type }} - {{ group.category }}</div>
                   <div
                     v-for="item in group.items"
                     :key="item"
                     class="suggestion-item"
-                    @click="addEpiEpc(item, group.type, group.category)"
+                    @click="addPPECPE(item, group.type, group.category)"
                   >
                     <span class="suggestion-name">{{ item }}</span>
                     <div class="suggestion-badges">
@@ -69,14 +69,14 @@
                 </template>
               </div>
             </div>
-            <div class="epi-epc-list">
-              <div v-for="(item, index) in data.epiEpc" :key="index" class="epi-epc-tag">
+            <div class="ppe-cpe-list">
+              <div v-for="(item, index) in data.ppeCPE" :key="index" class="ppe-cpe-tag">
                 <span class="tag-name">{{ item.name }}</span>
                 <div class="suggestion-badges">
                   <span :class="['badge', `badge-${item.type.toLowerCase()}`]">{{ item.type }}</span>
                   <span :class="['badge', `badge-${item.category}`]">{{ item.category }}</span>
                 </div>
-                <span class="tag-remove" @click="removeEpiEpc(index)">×</span>
+                <span class="tag-remove" @click="removePPECPE(index)">×</span>
               </div>
             </div>
           </div>
@@ -298,7 +298,7 @@ import { marked } from 'marked'
 import { useI18n } from 'vue-i18n'
 import { useSafetyData } from '~/composables/useSafetyData'
 
-const { t: translate } = useI18n()
+const { t: translate, locale } = useI18n()
 const { loadData, dangers, protectiveEquipments, pictograms } = useSafetyData()
 
 // Configure marked for security
@@ -332,15 +332,15 @@ const data = reactive({
     analyseRisques: ''
   },
   materials: [],
-  epiEpc: [],
+  ppeCPE: [],
   references: [],
   steps: [],
   improvements: []
 })
 
 // Input helpers
-const epiEpcQuery = ref('')
-const showEpiEpcSuggestions = ref(false)
+const ppeCPEQuery = ref('')
+const showPPECPESuggestions = ref(false)
 const dangerQuery = ref('')
 const showDangerSuggestions = ref(false)
 const newMaterial = reactive({ designation: '', quantity: 1, price: 0 })
@@ -352,121 +352,77 @@ const fileInput = ref(null)
 // Step counter for unique IDs
 let stepCounter = 0
 
-// EPI/EPC Suggestions
-const epiEpcSuggestions = {
-  'EPI': {
-    'électrique': [
-      'Casque isolant', 'Lunettes isolantes', 'Gants isolants',
-      'Écran facial isolant', 'Vêtements isolants', 'Chaussures isolantes'
-    ],
-    'mécanique': [
-      'Casque de chantier', 'Lunettes de protection', 'Gants anti-coupure',
-      'Protections auditives', 'Masque respiratoire', 'Harnais de sécurité'
-    ],
-    'commun': [
-      'Chaussures de sécurité', 'Gilet haute visibilité',
-      'Vêtements de travail', 'Gants de manutention'
-    ]
-  },
-  'EPC': {
-    'électrique': [
-      'Appareil de test VAT', 'Tapis isolant', 'Nappe isolante',
-      'Cadenas de consignation électrique', 'Dispositif de mise à la terre', 'Pancarte de consignation'
-    ],
-    'mécanique': [
-      'Protecteur de machine', 'Garde-corps', 'Filet de sécurité',
-      'Barrières de protection', 'Barre de consignation'
-    ],
-    'commun': [
-      'Serrure de consignation', 'Barrières de sécurité', 'Signalisation de sécurité',
-      'Extincteur', 'Trousse de premiers secours', 'Éclairage de sécurité'
-    ]
+// PPE/CPE Suggestions - dynamically built from protectiveEquipments data
+const ppeCPESuggestions = computed(() => {
+  if (!protectiveEquipments.value?.ppe || !protectiveEquipments.value?.cpe) {
+    return { PPE: {}, CPE: {} }
   }
-}
-
-// Danger Suggestions
-const dangerSuggestions = [
-  { name: 'Tension électrique', color: 'tension-electrique', requiresValue: true, unit: 'V', pictogram: 'DANGER-electricite.jpg' },
-  { name: 'Air comprimé', color: 'air-comprime', requiresValue: true, unit: 'bar', pictogram: 'DANGER-general.jpg' },
-  { name: 'Pression hydraulique', color: 'pression-hydraulique', requiresValue: true, unit: 'bar', pictogram: 'DANGER-general.jpg' },
-  { name: 'Instabilité mécanique', color: 'instabilite-mecanique', requiresValue: false, pictogram: 'DANGER-general.jpg' },
-  { name: 'Travail en hauteur', color: 'hauteur', requiresValue: true, unit: 'm', pictogram: 'DANGER-chute.jpg' },
-  { name: 'Risque d\'électrocution', color: 'tension-electrique', requiresValue: false, pictogram: 'DANGER-electricite.jpg' },
-  { name: 'Risque de chute', color: 'hauteur', requiresValue: false, pictogram: 'DANGER-chute.jpg' },
-  { name: 'Projection de particules', color: 'instabilite-mecanique', requiresValue: false, pictogram: 'DANGER-general.jpg' },
-  { name: 'Écrasement', color: 'instabilite-mecanique', requiresValue: false, pictogram: 'DANGER-charge-suspendue.jpg' },
-  { name: 'Coupure', color: 'instabilite-mecanique', requiresValue: false, pictogram: 'DANGER-general.jpg' },
-  { name: 'Température élevée', color: 'autre', requiresValue: true, unit: '°C', pictogram: 'DANGER-general.jpg' },
-  { name: 'Produit chimique', color: 'autre', requiresValue: false, pictogram: 'DANGER-produit-nocif.jpg' },
-  { name: 'Rayonnement', color: 'autre', requiresValue: false, pictogram: 'DANGER-radiations-non-ionisantes.jpg' },
-  { name: 'Bruit excessif', color: 'autre', requiresValue: true, unit: 'dB', pictogram: 'DANGER-general.jpg' },
-  { name: 'Espace confiné', color: 'autre', requiresValue: false, pictogram: 'DANGER-general.jpg' },
-  { name: 'Atmosphère explosive', color: 'autre', requiresValue: false, pictogram: 'DANGER-atmosphere-explosive.jpg' },
-  { name: 'Froid / Gel', color: 'autre', requiresValue: true, unit: '°C', pictogram: 'DANGER-froid-gel.jpg' },
-  { name: 'Charge suspendue', color: 'instabilite-mecanique', requiresValue: false, pictogram: 'DANGER-charge-suspendue.jpg' },
-  { name: 'Chariot élévateur', color: 'instabilite-mecanique', requiresValue: false, pictogram: 'DANGER-chariot.jpg' },
-  { name: 'Laser', color: 'autre', requiresValue: false, pictogram: 'DANGER-laser.jpg' },
-  { name: 'Produit corrosif', color: 'autre', requiresValue: false, pictogram: 'DANGER-produit-corrosif.jpg' },
-  { name: 'Produit explosif', color: 'autre', requiresValue: false, pictogram: 'DANGER-produit-explosif.jpg' },
-  { name: 'Produit inflammable', color: 'autre', requiresValue: false, pictogram: 'DANGER-produit-inflammable.jpg' },
-  { name: 'Produit toxique', color: 'autre', requiresValue: false, pictogram: 'DANGER-produit-toxique.jpg' },
-  { name: 'Risque biologique', color: 'autre', requiresValue: false, pictogram: 'DANGER-risque-biologique.jpg' },
-  { name: 'Radioactivité', color: 'autre', requiresValue: false, pictogram: 'DANGER-radioactivite.jpg' },
-  { name: 'Champ magnétique', color: 'autre', requiresValue: false, pictogram: 'DANGER-champ-magnetique.jpg' },
-  { name: 'Trébuchement', color: 'hauteur', requiresValue: false, pictogram: 'DANGER-trebuchement.jpg' }
-]
-
-// Helper function to get EPI/EPC pictogram filename
-const getEpiEpcPictogram = (name) => {
-  const lowerName = name.toLowerCase()
-  const pictogramMap = {
-    'casque': 'OBLIGATION-casque.jpg',
-    'casque isolant': 'OBLIGATION-casque.jpg',
-    'casque de chantier': 'OBLIGATION-casque.jpg',
-    'casque antibruit': 'OBLIGATION-casque-antibruit.jpg',
-    'protections auditives': 'OBLIGATION-casque-antibruit.jpg',
-    'lunettes': 'OBLIGATION-lunettes.jpg',
-    'lunettes isolantes': 'OBLIGATION-lunettes.jpg',
-    'lunettes de protection': 'OBLIGATION-lunettes.jpg',
-    'gants': 'OBLIGATION-gants.jpg',
-    'gants isolants': 'OBLIGATION-gants.jpg',
-    'gants anti-coupure': 'OBLIGATION-gants.jpg',
-    'gants de manutention': 'OBLIGATION-gants.jpg',
-    'chaussures': 'OBLIGATION-chaussures.jpg',
-    'chaussures de sécurité': 'OBLIGATION-chaussures.jpg',
-    'chaussures isolantes': 'OBLIGATION-chaussures.jpg',
-    'harnais': 'OBLIGATION-harnais.jpg',
-    'harnais de sécurité': 'OBLIGATION-harnais.jpg',
-    'visière': 'OBLIGATION-visiere.jpg',
-    'écran facial': 'OBLIGATION-visiere.jpg',
-    'écran facial isolant': 'OBLIGATION-visiere.jpg',
-    'masque': 'OBLIGATION-protection-voies-espiratoires.jpg',
-    'masque respiratoire': 'OBLIGATION-protection-voies-espiratoires.jpg',
-    'combinaison': 'OBLIGATION-combinaison.jpg',
-    'vêtements isolants': 'OBLIGATION-combinaison.jpg',
-    'vêtements de travail': 'OBLIGATION-combinaison.jpg',
-    'gilet': 'OBLIGATION-general.jpg',
-    'gilet haute visibilité': 'OBLIGATION-general.jpg'
+  
+  const lang = locale.value === 'fr' ? 'fr' : 'en'
+  
+  return {
+    PPE: {
+      electrical: (protectiveEquipments.value.ppe.electrical || []).map(e => e[lang]),
+      mechanical: (protectiveEquipments.value.ppe.mechanical || []).map(e => e[lang]),
+      common: (protectiveEquipments.value.ppe.common || []).map(e => e[lang])
+    },
+    CPE: {
+      electrical: (protectiveEquipments.value.cpe.electrical || []).map(e => e[lang]),
+      mechanical: (protectiveEquipments.value.cpe.mechanical || []).map(e => e[lang]),
+      common: (protectiveEquipments.value.cpe.common || []).map(e => e[lang])
+    }
   }
+})
 
-  // Try exact match first
-  if (pictogramMap[lowerName])
-    return pictogramMap[lowerName]
+// Danger Suggestions - dynamically built from dangers data
+const dangerSuggestions = computed(() => {
+  if (!dangers.value) return []
+  
+  const lang = locale.value === 'fr' ? 'fr' : 'en'
+  
+  return dangers.value.dangers.map(d => ({
+    name: d[lang],
+    color: d.color,
+    requiresValue: d.requiresValue,
+    unit: d.unit,
+    pictogram: pictograms.value?.dangers[d.pictogram] || 'DANGER-general.jpg'
+  }))
+})
 
-  // Try partial match
-  for (const [key, value] of Object.entries(pictogramMap)) {
-    if (lowerName.includes(key) || key.includes(lowerName))
-      return value
+// Helper function to get PPE/CPE pictogram filename
+const getPPECPEPictogram = (name) => {
+  if (!protectiveEquipments.value || !pictograms.value) return 'OBLIGATION-general.jpg'
+  
+  const lang = locale.value === 'fr' ? 'fr' : 'en'
+  
+  // Search in all categories for matching equipment
+  const allCategories = [
+    ...protectiveEquipments.value.ppe.electrical,
+    ...protectiveEquipments.value.ppe.mechanical,
+    ...protectiveEquipments.value.ppe.common,
+    ...protectiveEquipments.value.cpe.electrical,
+    ...protectiveEquipments.value.cpe.mechanical,
+    ...protectiveEquipments.value.cpe.common
+  ]
+  
+  const equipment = allCategories.find(e => e[lang].toLowerCase() === name.toLowerCase())
+  if (equipment && equipment.pictogram) {
+    return pictograms.value.obligations[equipment.pictogram] || 'OBLIGATION-general.jpg'
   }
-
+  
   return 'OBLIGATION-general.jpg'
 }
 
 // Helper function to get danger pictogram filename
 const getDangerPictogram = (dangerName) => {
-  const suggestion = dangerSuggestions.find(d => d.name === dangerName)
-  if (suggestion && suggestion.pictogram)
-    return suggestion.pictogram
+  if (!dangers.value || !pictograms.value) return 'DANGER-general.jpg'
+  
+  const lang = locale.value === 'fr' ? 'fr' : 'en'
+  
+  const danger = dangers.value.dangers.find(d => d[lang] === dangerName)
+  if (danger && danger.pictogram) {
+    return pictograms.value.dangers[danger.pictogram] || 'DANGER-general.jpg'
+  }
   return 'DANGER-general.jpg'
 }
 
@@ -502,10 +458,10 @@ const preloadPictograms = async () => {
   const obligationPictograms = new Set()
   const dangerPictograms = new Set()
 
-  // EPI/EPC pictograms
-  if (data.epiEpc) {
-    data.epiEpc.forEach((item) => {
-      const picto = getEpiEpcPictogram(item.name)
+  // PPE/CPE pictograms
+  if (data.ppeCPE) {
+    data.ppeCPE.forEach((item) => {
+      const picto = getPPECPEPictogram(item.name)
       obligationPictograms.add(picto)
     })
   }
@@ -544,13 +500,13 @@ const preloadPictograms = async () => {
 }
 
 // Computed properties
-const epiEpcMatches = computed(() => {
-  const query = epiEpcQuery.value.toLowerCase().trim()
+const ppeCPEMatches = computed(() => {
+  const query = ppeCPEQuery.value.toLowerCase().trim()
   if (query.length < 2)
     return []
 
   const matches = []
-  Object.entries(epiEpcSuggestions).forEach(([type, categories]) => {
+  Object.entries(ppeCPESuggestions.value).forEach(([type, categories]) => {
     Object.entries(categories).forEach(([category, items]) => {
       items.forEach((item) => {
         if (item.toLowerCase().includes(query)) {
@@ -562,9 +518,9 @@ const epiEpcMatches = computed(() => {
   return matches
 })
 
-const groupedEpiEpcMatches = computed(() => {
+const groupedPPECPEMatches = computed(() => {
   const grouped = {}
-  epiEpcMatches.value.forEach((match) => {
+  ppeCPEMatches.value.forEach((match) => {
     const key = `${match.type}-${match.category}`
     if (!grouped[key]) {
       grouped[key] = { type: match.type, category: match.category, items: [] }
@@ -578,7 +534,7 @@ const dangerMatches = computed(() => {
   const query = dangerQuery.value.toLowerCase().trim()
   if (query.length < 2)
     return []
-  return dangerSuggestions.filter(d => d.name.toLowerCase().includes(query))
+  return dangerSuggestions.value.filter(d => d.name.toLowerCase().includes(query))
 })
 
 const materialTotal = computed(() => {
@@ -613,33 +569,33 @@ watch(data, () => {
 }, { deep: true })
 
 // Methods
-const handleEpiEpcInput = () => {
-  showEpiEpcSuggestions.value = epiEpcMatches.value.length > 0
+const handlePPECPEInput = () => {
+  showPPECPESuggestions.value = ppeCPEMatches.value.length > 0
 }
 
 const hideSuggestions = () => {
-  showEpiEpcSuggestions.value = false
+  showPPECPESuggestions.value = false
 }
 
-const addEpiEpc = (name, type, category) => {
-  if (data.epiEpc.some(item => item.name === name)) {
+const addPPECPE = (name, type, category) => {
+  if (data.ppeCPE.some(item => item.name === name)) {
     showNotification('⚠️ Cet équipement est déjà dans la liste', 'info')
     return
   }
-  data.epiEpc.push({ name, type, category })
-  epiEpcQuery.value = ''
+  data.ppeCPE.push({ name, type, category })
+  ppeCPEQuery.value = ''
   hideSuggestions()
 }
 
-const addCustomEpiEpc = () => {
-  const customValue = epiEpcQuery.value.trim()
+const addCustomPPECPE = () => {
+  const customValue = ppeCPEQuery.value.trim()
   if (customValue) {
-    addEpiEpc(customValue, 'Personnalisé', 'personnalisé')
+    addPPECPE(customValue, 'Personnalisé', 'personnalisé')
   }
 }
 
-const removeEpiEpc = (index) => {
-  data.epiEpc.splice(index, 1)
+const removePPECPE = (index) => {
+  data.ppeCPE.splice(index, 1)
 }
 
 const handleDangerInput = () => {
@@ -812,7 +768,8 @@ const loadFromStorage = () => {
       data.warnings.dangers = parsed.warnings?.dangers || []
       data.warnings.analyseRisques = parsed.warnings?.analyseRisques || ''
       data.materials = parsed.materials || []
-      data.epiEpc = parsed.epiEpc || []
+      // Support legacy epiEpc field name for backwards compatibility
+      data.ppeCPE = parsed.ppeCPE || parsed.epiEpc || []
       data.references = parsed.references || []
       data.steps = parsed.steps || []
       data.improvements = parsed.improvements || []
@@ -853,7 +810,8 @@ const handleFileLoad = (event) => {
       data.warnings.dangers = parsed.warnings?.dangers || []
       data.warnings.analyseRisques = parsed.warnings?.analyseRisques || ''
       data.materials = parsed.materials || []
-      data.epiEpc = parsed.epiEpc || []
+      // Support legacy epiEpc field name for backwards compatibility
+      data.ppeCPE = parsed.ppeCPE || parsed.epiEpc || []
       data.references = parsed.references || []
       data.steps = parsed.steps || []
       data.improvements = parsed.improvements || []
@@ -964,16 +922,16 @@ const printPage = async () => {
       y += 8
     }
 
-    // EPI/EPC
-    if (data.epiEpc && data.epiEpc.length > 0) {
+    // PPE/CPE
+    if (data.ppeCPE && data.ppeCPE.length > 0) {
       doc.setFont('times', 'bold')
       doc.text(`${translate('consignment.fields.epiEpc')} `, margin, y)
       y += 6
       doc.setFont('times', 'normal')
 
-      data.epiEpc.forEach((item) => {
+      data.ppeCPE.forEach((item) => {
         // Try to add pictogram
-        const pictoFile = getEpiEpcPictogram(item.name)
+        const pictoFile = getPPECPEPictogram(item.name)
         const pictoKey = `OBLIGATION/${pictoFile}`
         if (pictograms[pictoKey]) {
           try {
@@ -1263,7 +1221,7 @@ const clearAll = () => {
     data.warnings.dangers = []
     data.warnings.analyseRisques = ''
     data.materials = []
-    data.epiEpc = []
+    data.ppeCPE = []
     data.references = []
     data.steps = []
     data.improvements = []
@@ -1280,7 +1238,7 @@ const showNotification = (message, type = 'info') => {
 
 // Click outside handler for suggestions
 const handleClickOutside = (e) => {
-  if (!e.target.closest('.epi-epc-input-container')) {
+  if (!e.target.closest('.ppe-cpe-input-container')) {
     hideSuggestions()
   }
   if (!e.target.closest('.danger-input-container')) {
@@ -1292,8 +1250,7 @@ onMounted(() => {
   loadFromStorage()
   document.addEventListener('click', handleClickOutside)
   
-  // Load safety data from JSON files for future use
-  // TODO: Replace hardcoded epiEpcSuggestions and dangerSuggestions with this data
+  // Load safety data from JSON files
   loadData().then(() => {
     console.log('✅ Safety data loaded:', {
       dangersCount: dangers.value?.dangers.length,
@@ -1451,7 +1408,8 @@ header h1 {
   color: #1e293b;
 }
 
-/* EPI/EPC */
+/* PPE/CPE Input Container */
+.ppe-cpe-input-container,
 .epi-epc-input-container {
   position: relative;
 }
@@ -1506,11 +1464,11 @@ header h1 {
   color: white;
 }
 
-.badge-epi {
+.badge-ppe {
   background: #64748b;
 }
 
-.badge-epc {
+.badge-cpe {
   background: #475569;
 }
 
@@ -1519,20 +1477,23 @@ header h1 {
 }
 
 .badge-électrique,
-.badge-electrique {
+.badge-electrique,
+.badge-electrical {
   background: #eab308;
 }
 
 .badge-mécanique,
-.badge-mecanique {
+.badge-mecanique,
+.badge-mechanical {
   background: #92400e;
 }
 
-.badge-commun {
+.badge-commun,
+.badge-common {
   background: #dc2626;
 }
 
-.epi-epc-list {
+.ppe-cpe-list {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -1540,7 +1501,7 @@ header h1 {
   min-height: 40px;
 }
 
-.epi-epc-tag {
+.ppe-cpe-tag {
   display: inline-flex;
   align-items: center;
   gap: 8px;
