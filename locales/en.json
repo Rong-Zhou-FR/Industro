@@ -276,7 +276,8 @@
       "fillMachineName": "Please enter the machine name",
       "selectJSONFile": "Please select a JSON file",
       "parsingError": "Error parsing JSON file:",
-      "invalidFormat": "Invalid file format"
+      "invalidFormat": "Invalid file format",
+      "pdfGenerationError": "Error generating PDF. Please try again."
     }
   }
 }

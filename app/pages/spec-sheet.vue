@@ -984,6 +984,124 @@ const getRiskLabel = (item: unknown): string => {
   return typeof item === 'object' && item !== null && 'name' in item ? (item as any).name : t(`specSheet.risks.riskTypes.${item}`)
 }
 
+// Helper function to get PPE pictogram filename
+const getPPEPictogram = (name: string): string => {
+  if (!protectiveEquipments.value || !pictograms.value) return 'OBLIGATION-general.jpg'
+  
+  const lang = locale.value === 'fr' ? 'fr' : 'en'
+  
+  // Search in all categories for matching equipment
+  const allCategories = [
+    ...protectiveEquipments.value.ppe.electrical,
+    ...protectiveEquipments.value.ppe.mechanical,
+    ...protectiveEquipments.value.ppe.common
+  ]
+  
+  const equipment = allCategories.find(e => e[lang].toLowerCase() === name.toLowerCase())
+  if (equipment && equipment.pictogram) {
+    return pictograms.value.obligations[equipment.pictogram] || 'OBLIGATION-general.jpg'
+  }
+  
+  return 'OBLIGATION-general.jpg'
+}
+
+// Helper function to get risk pictogram filename
+const getRiskPictogram = (riskName: string): string => {
+  if (!dangers.value || !pictograms.value) return 'DANGER-general.jpg'
+  
+  const lang = locale.value === 'fr' ? 'fr' : 'en'
+  
+  const danger = dangers.value.dangers.find(d => d[lang] === riskName)
+  if (danger && danger.pictogram) {
+    return pictograms.value.dangers[danger.pictogram] || 'DANGER-general.jpg'
+  }
+  return 'DANGER-general.jpg'
+}
+
+// Helper function to load image as base64
+const loadImageAsBase64 = (src: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.crossOrigin = 'Anonymous'
+    img.onload = function () {
+      try {
+        const canvas = document.createElement('canvas')
+        canvas.width = this.naturalWidth
+        canvas.height = this.naturalHeight
+        const ctx = canvas.getContext('2d')
+        if (ctx) {
+          ctx.drawImage(img, 0, 0)
+          const base64 = canvas.toDataURL('image/jpeg')
+          resolve(base64)
+        } else {
+          reject(new Error('Failed to get canvas context'))
+        }
+      } catch (e) {
+        reject(e)
+      }
+    }
+    img.onerror = () => reject(new Error(`Failed to load image: ${src}`))
+    img.src = src
+  })
+}
+
+// Preload all needed pictograms for PDF
+const preloadPictograms = async (): Promise<Record<string, string>> => {
+  const pictogramData: Record<string, string> = {}
+
+  // Collect all unique pictograms needed
+  const obligationPictograms = new Set<string>()
+  const dangerPictograms = new Set<string>()
+
+  // PPE pictograms
+  if (data.safety.requiredPPE) {
+    data.safety.requiredPPE.forEach((item) => {
+      const ppeLabel = getPPELabel(item)
+      const picto = getPPEPictogram(ppeLabel)
+      obligationPictograms.add(picto)
+    })
+  }
+
+  if (data.safety.prohibitedPPE) {
+    data.safety.prohibitedPPE.forEach((item) => {
+      const ppeLabel = getPPELabel(item)
+      const picto = getPPEPictogram(ppeLabel)
+      obligationPictograms.add(picto)
+    })
+  }
+
+  // Risk pictograms
+  if (data.risks.identifiedRisks) {
+    data.risks.identifiedRisks.forEach((risk) => {
+      const riskLabel = getRiskLabel(risk)
+      const picto = getRiskPictogram(riskLabel)
+      dangerPictograms.add(picto)
+    })
+  }
+
+  // Load obligation pictograms
+  for (const picto of obligationPictograms) {
+    try {
+      const base64 = await loadImageAsBase64(`/resources/Pictogrammes_jpeg/OBLIGATION/${picto}`)
+      pictogramData[`OBLIGATION/${picto}`] = base64
+    } catch (e) {
+      console.warn(`Could not load pictogram: ${picto}`, e)
+    }
+  }
+
+  // Load danger pictograms
+  for (const picto of dangerPictograms) {
+    try {
+      const base64 = await loadImageAsBase64(`/resources/Pictogrammes_jpeg/AVERTISSEMENT_DANGER/${picto}`)
+      pictogramData[`DANGER/${picto}`] = base64
+    } catch (e) {
+      console.warn(`Could not load pictogram: ${picto}`, e)
+    }
+  }
+
+  return pictogramData
+}
+
 const triggerPhotoUpload = (): void => {
   photoInput.value?.click()
 }
@@ -1057,136 +1175,312 @@ const exportToPDF = async (): Promise<void> => {
     return
   }
 
-  // Dynamically import jsPDF only when needed (client-side only) and memoize it
-  if (!jsPDFModule) {
-    jsPDFModule = await import('jspdf')
-  }
-  const { jsPDF } = jsPDFModule
-  
-  const pdf = new jsPDF('p', 'mm', 'a4')
-  let yPosition = 20
+  try {
+    // Preload pictograms
+    const pictogramData = await preloadPictograms()
 
-  // Title
-  pdf.setFontSize(20)
-  pdf.text(t('specSheet.pdf.title'), 105, yPosition, { align: 'center' })
-  yPosition += 10
-
-  pdf.setFontSize(12)
-  pdf.text(t('specSheet.pdf.subtitle'), 105, yPosition, { align: 'center' })
-  yPosition += 15
-
-  // Version and date
-  pdf.setFontSize(10)
-  pdf.text(`${t('specSheet.pdf.version')} ${data.identification.sheetVersion}`, 20, yPosition)
-  pdf.text(`${t('specSheet.pdf.date')} ${formatDate(data.identification.sheetDate)}`, 150, yPosition)
-  yPosition += 10
-
-  // Helper function to add section
-  const addSection = (title: string, content: string[]): void => {
-    if (yPosition > 250) {
-      pdf.addPage()
-      yPosition = 20
+    // Dynamically import jsPDF only when needed (client-side only) and memoize it
+    if (!jsPDFModule) {
+      jsPDFModule = await import('jspdf')
     }
-    pdf.setFontSize(14)
-    pdf.setFont('helvetica', 'bold')
-    pdf.text(title, 20, yPosition)
-    yPosition += 7
+    const { jsPDF } = jsPDFModule
+    
+    const pdf = new jsPDF('p', 'mm', 'a4')
+    let yPosition = 20
+    const pageWidth = pdf.internal.pageSize.getWidth()
+    const margin = 20
+    const contentWidth = pageWidth - 2 * margin
+    const pictoSize = 8 // Size of pictogram in mm
 
+    // Use Times font for better character support
+    pdf.setFont('times', 'normal')
+
+    // Title
+    pdf.setFontSize(20)
+    pdf.setFont('times', 'bold')
+    const titleText = t('specSheet.pdf.title')
+    pdf.text(titleText, pageWidth / 2, yPosition, { align: 'center' })
+    yPosition += 10
+
+    pdf.setFontSize(12)
+    pdf.setFont('times', 'italic')
+    const subtitleText = t('specSheet.pdf.subtitle')
+    pdf.text(subtitleText, pageWidth / 2, yPosition, { align: 'center' })
+    yPosition += 15
+
+    // Version and date
     pdf.setFontSize(10)
-    pdf.setFont('helvetica', 'normal')
-    content.forEach(line => {
-      if (yPosition > 270) {
+    pdf.setFont('times', 'normal')
+    pdf.text(`${t('specSheet.pdf.version')} ${data.identification.sheetVersion}`, margin, yPosition)
+    pdf.text(`${t('specSheet.pdf.date')} ${formatDate(data.identification.sheetDate)}`, 150, yPosition)
+    yPosition += 10
+
+    // Helper function to convert markdown to plain text
+    const stripMarkdown = (text: string): string => {
+      if (!text) return ''
+      // Remove markdown formatting
+      return text
+        .replace(/\*\*(.*?)\*\*/g, '$1')  // Remove bold
+        .replace(/\*(.*?)\*/g, '$1')      // Remove italic
+        .replace(/_(.*?)_/g, '$1')        // Remove italic
+        .replace(/`(.*?)`/g, '$1')        // Remove code
+        .replace(/#{1,6}\s/g, '')         // Remove headers
+        .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Remove links, keep text
+        .trim()
+    }
+
+    // Helper function to add section
+    const addSection = (title: string, content: string[]): void => {
+      if (yPosition > 250) {
         pdf.addPage()
         yPosition = 20
       }
-      const lines = pdf.splitTextToSize(line, 170)
-      pdf.text(lines, 20, yPosition)
-      yPosition += 5 * lines.length
-    })
+      pdf.setFontSize(14)
+      pdf.setFont('times', 'bold')
+      pdf.setTextColor(0, 51, 102) // Dark blue
+      pdf.text(title, margin, yPosition)
+      yPosition += 7
+
+      pdf.setFontSize(10)
+      pdf.setFont('times', 'normal')
+      pdf.setTextColor(0, 0, 0)
+      content.forEach(line => {
+        if (yPosition > 270) {
+          pdf.addPage()
+          yPosition = 20
+        }
+        const cleanedLine = stripMarkdown(line)
+        const lines = pdf.splitTextToSize(cleanedLine, contentWidth)
+        pdf.text(lines, margin, yPosition)
+        yPosition += 5 * lines.length
+      })
+      yPosition += 5
+    }
+
+    // 1. Identification
+    pdf.setFontSize(14)
+    pdf.setFont('times', 'bold')
+    pdf.setTextColor(0, 51, 102)
+    pdf.text(t('specSheet.sections.identification'), margin, yPosition)
+    yPosition += 8
+
+    pdf.setFontSize(10)
+    pdf.setFont('times', 'normal')
+    pdf.setTextColor(0, 0, 0)
+    
+    pdf.text(`${t('specSheet.identification.machineName')}: ${data.identification.machineName}`, margin, yPosition)
+    yPosition += 6
+    if (data.identification.brand) {
+      pdf.text(`${t('specSheet.identification.brand')}: ${data.identification.brand}`, margin, yPosition)
+      yPosition += 6
+    }
+    if (data.identification.serialNumber) {
+      pdf.text(`${t('specSheet.identification.serialNumber')}: ${data.identification.serialNumber}`, margin, yPosition)
+      yPosition += 6
+    }
+    if (data.identification.commissioningDate) {
+      pdf.text(`${t('specSheet.identification.commissioningDate')}: ${formatDate(data.identification.commissioningDate)}`, margin, yPosition)
+      yPosition += 6
+    }
     yPosition += 5
-  }
 
-  // 1. Identification
-  addSection(t('specSheet.sections.identification'), [
-    `${t('specSheet.identification.machineName')} ${data.identification.machineName}`,
-    `${t('specSheet.identification.brand')} ${data.identification.brand || '-'}`,
-    `${t('specSheet.identification.serialNumber')} ${data.identification.serialNumber || '-'}`,
-    `${t('specSheet.identification.commissioningDate')} ${formatDate(data.identification.commissioningDate)}`
-  ])
-
-  // 2. Technical Characteristics
-  const techLines: string[] = []
-  if (data.technical.dimensions) techLines.push(`${t('specSheet.technical.dimensions')} ${data.technical.dimensions}`)
-  if (data.technical.weight) techLines.push(`${t('specSheet.technical.weight')} ${data.technical.weight}`)
-  if (data.technical.speedRanges) techLines.push(`${t('specSheet.technical.speedRanges')} ${data.technical.speedRanges}`)
-  if (data.technical.powerSupply) techLines.push(`${t('specSheet.technical.powerSupply')} ${data.technical.powerSupply}`)
-  if (data.technical.noiseLevel) techLines.push(`${t('specSheet.technical.noiseLevel')} ${data.technical.noiseLevel}`)
-  if (techLines.length > 0) {
-    addSection(t('specSheet.sections.technical'), techLines)
-  }
-
-  // 3. Safety & PPE
-  if (data.safety.requiredPPE.length > 0 || data.safety.prohibitedPPE.length > 0) {
-    const safetyLines: string[] = []
-    if (data.safety.requiredPPE.length > 0) {
-      safetyLines.push(`${t('specSheet.safety.requiredPPE')} ${data.safety.requiredPPE.map(getPPELabel).join(', ')}`)
+    // 2. Technical Characteristics
+    if (data.technical.dimensions || data.technical.weight || data.technical.speedRanges || data.technical.powerSupply || data.technical.noiseLevel || data.technical.operatingLimits || data.technical.additionalSpecs) {
+      const techLines: string[] = []
+      if (data.technical.dimensions) techLines.push(`${t('specSheet.technical.dimensions')}: ${data.technical.dimensions}`)
+      if (data.technical.weight) techLines.push(`${t('specSheet.technical.weight')}: ${data.technical.weight}`)
+      if (data.technical.speedRanges) techLines.push(`${t('specSheet.technical.speedRanges')}: ${data.technical.speedRanges}`)
+      if (data.technical.powerSupply) techLines.push(`${t('specSheet.technical.powerSupply')}: ${data.technical.powerSupply}`)
+      if (data.technical.noiseLevel) techLines.push(`${t('specSheet.technical.noiseLevel')}: ${data.technical.noiseLevel}`)
+      if (data.technical.operatingLimits) techLines.push(`${t('specSheet.technical.operatingLimits')}: ${stripMarkdown(data.technical.operatingLimits)}`)
+      if (data.technical.additionalSpecs) techLines.push(`${t('specSheet.technical.additionalSpecs')}: ${stripMarkdown(data.technical.additionalSpecs)}`)
+      addSection(t('specSheet.sections.technical'), techLines)
     }
-    if (data.safety.prohibitedPPE.length > 0) {
-      safetyLines.push(`${t('specSheet.safety.prohibitedPPE')} ${data.safety.prohibitedPPE.map(getPPELabel).join(', ')}`)
+
+    // 3. Safety & PPE
+    if (data.safety.requiredPPE.length > 0 || data.safety.prohibitedPPE.length > 0) {
+      if (yPosition > 250) {
+        pdf.addPage()
+        yPosition = 20
+      }
+
+      pdf.setFontSize(14)
+      pdf.setFont('times', 'bold')
+      pdf.setTextColor(0, 51, 102)
+      pdf.text(t('specSheet.sections.safety'), margin, yPosition)
+      yPosition += 8
+
+      pdf.setFontSize(10)
+      pdf.setTextColor(0, 0, 0)
+
+      // Required PPE with pictograms
+      if (data.safety.requiredPPE.length > 0) {
+        pdf.setFont('times', 'bold')
+        pdf.text(t('specSheet.safety.requiredPPE'), margin, yPosition)
+        yPosition += 6
+        pdf.setFont('times', 'normal')
+
+        data.safety.requiredPPE.forEach((ppe) => {
+          const ppeLabel = getPPELabel(ppe)
+          const pictoFile = getPPEPictogram(ppeLabel)
+          const pictoKey = `OBLIGATION/${pictoFile}`
+          
+          if (pictogramData[pictoKey]) {
+            try {
+              pdf.addImage(pictogramData[pictoKey], 'JPEG', margin + 5, yPosition - 5, pictoSize, pictoSize)
+            } catch (e) {
+              console.warn('Failed to add pictogram:', e)
+            }
+          }
+
+          pdf.text(ppeLabel, margin + 5 + pictoSize + 3, yPosition)
+          yPosition += Math.max(pictoSize, 5) + 2
+
+          if (yPosition > 270) {
+            pdf.addPage()
+            yPosition = 20
+          }
+        })
+        yPosition += 3
+      }
+
+      // Prohibited PPE with pictograms
+      if (data.safety.prohibitedPPE.length > 0) {
+        pdf.setFont('times', 'bold')
+        pdf.text(t('specSheet.safety.prohibitedPPE'), margin, yPosition)
+        yPosition += 6
+        pdf.setFont('times', 'normal')
+
+        data.safety.prohibitedPPE.forEach((ppe) => {
+          const ppeLabel = getPPELabel(ppe)
+          const pictoFile = getPPEPictogram(ppeLabel)
+          const pictoKey = `OBLIGATION/${pictoFile}`
+          
+          if (pictogramData[pictoKey]) {
+            try {
+              pdf.addImage(pictogramData[pictoKey], 'JPEG', margin + 5, yPosition - 5, pictoSize, pictoSize)
+            } catch (e) {
+              console.warn('Failed to add pictogram:', e)
+            }
+          }
+
+          pdf.setTextColor(153, 0, 0) // Red text for prohibited
+          pdf.text(ppeLabel, margin + 5 + pictoSize + 3, yPosition)
+          pdf.setTextColor(0, 0, 0)
+          yPosition += Math.max(pictoSize, 5) + 2
+
+          if (yPosition > 270) {
+            pdf.addPage()
+            yPosition = 20
+          }
+        })
+        yPosition += 3
+      }
+      yPosition += 5
     }
-    addSection(t('specSheet.sections.safety'), safetyLines)
-  }
 
-  // 4. Operations
-  if (data.operations.normalOperation || data.operations.adjustments || data.operations.maintenance) {
-    const opLines: string[] = []
-    if (data.operations.normalOperation) opLines.push(`${t('specSheet.operations.normalOperation')} ${data.operations.normalOperation}`)
-    if (data.operations.adjustments) opLines.push(`${t('specSheet.operations.adjustments')} ${data.operations.adjustments}`)
-    if (data.operations.maintenance) opLines.push(`${t('specSheet.operations.maintenance')} ${data.operations.maintenance}`)
-    addSection(t('specSheet.sections.operations'), opLines)
-  }
-
-  // 5. Risks & Dangers
-  if (data.risks.identifiedRisks.length > 0 || data.risks.residualRisks) {
-    const riskLines: string[] = []
-    if (data.risks.identifiedRisks.length > 0) {
-      riskLines.push(`${t('specSheet.risks.identifiedRisks')} ${data.risks.identifiedRisks.map(getRiskLabel).join(', ')}`)
+    // 4. Operations
+    if (data.operations.normalOperation || data.operations.adjustments || data.operations.maintenance) {
+      const opLines: string[] = []
+      if (data.operations.normalOperation) opLines.push(`${t('specSheet.operations.normalOperation')}: ${stripMarkdown(data.operations.normalOperation)}`)
+      if (data.operations.adjustments) opLines.push(`${t('specSheet.operations.adjustments')}: ${stripMarkdown(data.operations.adjustments)}`)
+      if (data.operations.maintenance) opLines.push(`${t('specSheet.operations.maintenance')}: ${stripMarkdown(data.operations.maintenance)}`)
+      addSection(t('specSheet.sections.operations'), opLines)
     }
-    if (data.risks.residualRisks) {
-      riskLines.push(`${t('specSheet.risks.residualRisks')} ${data.risks.residualRisks}`)
+
+    // 5. Risks & Dangers
+    if (data.risks.identifiedRisks.length > 0 || data.risks.residualRisks) {
+      if (yPosition > 250) {
+        pdf.addPage()
+        yPosition = 20
+      }
+
+      pdf.setFontSize(14)
+      pdf.setFont('times', 'bold')
+      pdf.setTextColor(153, 0, 0) // Dark red
+      pdf.text(t('specSheet.sections.risks'), margin, yPosition)
+      yPosition += 8
+
+      pdf.setFontSize(10)
+      pdf.setTextColor(0, 0, 0)
+
+      // Identified risks with pictograms
+      if (data.risks.identifiedRisks.length > 0) {
+        pdf.setFont('times', 'bold')
+        pdf.text(t('specSheet.risks.identifiedRisks'), margin, yPosition)
+        yPosition += 6
+        pdf.setFont('times', 'normal')
+
+        data.risks.identifiedRisks.forEach((risk) => {
+          const riskLabel = getRiskLabel(risk)
+          const pictoFile = getRiskPictogram(riskLabel)
+          const pictoKey = `DANGER/${pictoFile}`
+          
+          if (pictogramData[pictoKey]) {
+            try {
+              pdf.addImage(pictogramData[pictoKey], 'JPEG', margin + 5, yPosition - 5, pictoSize, pictoSize)
+            } catch (e) {
+              console.warn('Failed to add danger pictogram:', e)
+            }
+          }
+
+          pdf.text(riskLabel, margin + 5 + pictoSize + 3, yPosition)
+          yPosition += Math.max(pictoSize, 5) + 2
+
+          if (yPosition > 270) {
+            pdf.addPage()
+            yPosition = 20
+          }
+        })
+        yPosition += 3
+      }
+
+      if (data.risks.residualRisks) {
+        pdf.setFont('times', 'bold')
+        pdf.text(`${t('specSheet.risks.residualRisks')}:`, margin, yPosition)
+        yPosition += 6
+        pdf.setFont('times', 'normal')
+        const cleanedRisks = stripMarkdown(data.risks.residualRisks)
+        const riskLines = pdf.splitTextToSize(cleanedRisks, contentWidth - 10)
+        pdf.text(riskLines, margin + 5, yPosition)
+        yPosition += riskLines.length * 5 + 5
+      }
     }
-    addSection(t('specSheet.sections.risks'), riskLines)
-  }
 
-  // 6. Preventive Measures
-  if (data.prevention.instructions || data.prevention.toDo || data.prevention.toAvoid) {
-    const prevLines: string[] = []
-    if (data.prevention.instructions) prevLines.push(data.prevention.instructions)
-    if (data.prevention.toDo) prevLines.push(`${t('specSheet.prevention.toDo')} ${data.prevention.toDo}`)
-    if (data.prevention.toAvoid) prevLines.push(`${t('specSheet.prevention.toAvoid')} ${data.prevention.toAvoid}`)
-    addSection(t('specSheet.sections.prevention'), prevLines)
-  }
+    // 6. Preventive Measures
+    if (data.prevention.instructions || data.prevention.toDo || data.prevention.toAvoid) {
+      const prevLines: string[] = []
+      if (data.prevention.instructions) prevLines.push(stripMarkdown(data.prevention.instructions))
+      if (data.prevention.toDo) prevLines.push(`${t('specSheet.prevention.toDo')}: ${stripMarkdown(data.prevention.toDo)}`)
+      if (data.prevention.toAvoid) prevLines.push(`${t('specSheet.prevention.toAvoid')}: ${stripMarkdown(data.prevention.toAvoid)}`)
+      addSection(t('specSheet.sections.prevention'), prevLines)
+    }
 
-  // 7. Qualification
-  if (data.qualification.authorizedPersonnel || data.qualification.requiredTraining || data.qualification.certifications) {
-    const qualLines: string[] = []
-    if (data.qualification.authorizedPersonnel) qualLines.push(`${t('specSheet.qualification.authorizedPersonnel')} ${data.qualification.authorizedPersonnel}`)
-    if (data.qualification.requiredTraining) qualLines.push(`${t('specSheet.qualification.requiredTraining')} ${data.qualification.requiredTraining}`)
-    if (data.qualification.certifications) qualLines.push(`${t('specSheet.qualification.certifications')} ${data.qualification.certifications}`)
-    addSection(t('specSheet.sections.qualification'), qualLines)
-  }
+    // 7. Qualification
+    if (data.qualification.authorizedPersonnel || data.qualification.requiredTraining || data.qualification.certifications) {
+      const qualLines: string[] = []
+      if (data.qualification.authorizedPersonnel) qualLines.push(`${t('specSheet.qualification.authorizedPersonnel')}: ${stripMarkdown(data.qualification.authorizedPersonnel)}`)
+      if (data.qualification.requiredTraining) qualLines.push(`${t('specSheet.qualification.requiredTraining')}: ${stripMarkdown(data.qualification.requiredTraining)}`)
+      if (data.qualification.certifications) qualLines.push(`${t('specSheet.qualification.certifications')}: ${stripMarkdown(data.qualification.certifications)}`)
+      addSection(t('specSheet.sections.qualification'), qualLines)
+    }
 
-  // 8. Emergency Procedures
-  const emergLines: string[] = []
-  if (data.emergency.emergencyStop) emergLines.push(`${t('specSheet.emergency.emergencyStop')} ${data.emergency.emergencyStop}`)
-  if (data.emergency.firstAid) emergLines.push(`${t('specSheet.emergency.firstAid')} ${data.emergency.firstAid}`)
-  if (data.emergency.fireBrigade) emergLines.push(`${t('specSheet.emergency.fireBrigade')} ${data.emergency.fireBrigade}`)
-  if (data.emergency.samu) emergLines.push(`${t('specSheet.emergency.samu')} ${data.emergency.samu}`)
-  if (emergLines.length > 0) {
-    addSection(t('specSheet.sections.emergency'), emergLines)
-  }
+    // 8. Emergency Procedures
+    if (data.emergency.emergencyStop || data.emergency.firstAid || data.emergency.fireBrigade || data.emergency.samu || data.emergency.internalEscalation) {
+      const emergLines: string[] = []
+      if (data.emergency.emergencyStop) emergLines.push(`${t('specSheet.emergency.emergencyStop')}: ${stripMarkdown(data.emergency.emergencyStop)}`)
+      if (data.emergency.firstAid) emergLines.push(`${t('specSheet.emergency.firstAid')}: ${data.emergency.firstAid}`)
+      if (data.emergency.fireBrigade) emergLines.push(`${t('specSheet.emergency.fireBrigade')}: ${data.emergency.fireBrigade}`)
+      if (data.emergency.samu) emergLines.push(`${t('specSheet.emergency.samu')}: ${data.emergency.samu}`)
+      if (data.emergency.internalEscalation) emergLines.push(`${t('specSheet.emergency.internalEscalation')}: ${stripMarkdown(data.emergency.internalEscalation)}`)
+      addSection(t('specSheet.sections.emergency'), emergLines)
+    }
 
-  pdf.save(`spec-sheet-${data.identification.machineName}-${Date.now()}.pdf`)
+    pdf.save(`spec-sheet-${data.identification.machineName}-${Date.now()}.pdf`)
+  } catch (error) {
+    console.error('Error generating PDF:', error)
+    alert(t('specSheet.errors.pdfGenerationError'))
+  }
 }
 
 const clearAllData = (): void => {
