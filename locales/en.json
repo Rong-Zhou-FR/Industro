@@ -88,7 +88,7 @@
       "title": "Title:",
       "titlePlaceholder": "Intervention title",
       "description": "Description:",
-      "descriptionPlaceholder": "Detailed description of the intervention",
+      "descriptionPlaceholder": "Detailed description of the intervention (Markdown supported: **bold**, _italic_, lists)",
       "date": "Date:",
       "number": "Number:",
       "numberPlaceholder": "Intervention No.",
@@ -99,7 +99,7 @@
       "epiEpc": "Required PPE/CPE:",
       "epiEpcPlaceholder": "Start typing to see suggestions...",
       "riskAnalysisPlaceholder": "Detailed risk analysis...\n\nExample (markdown supported):\n- **Electrical risk**: Requires complete lockout\n- **Preventive measures**:\n  - Check VAT before intervention\n  - Wear appropriate electrical PPE",
-      "instructionPlaceholder": "Instruction description...",
+      "instructionPlaceholder": "Instruction description... (Markdown supported: **bold**, _italic_, lists)",
       "designation": "Designation",
       "designationPlaceholder": "Designation",
       "quantity": "Quantity",
@@ -168,7 +168,7 @@
       "uploadPhoto": "Upload Machine Photo:",
       "uploadDiagram": "Upload Diagram (Optional):",
       "safetyPoints": "Safety Points (one per line):",
-      "safetyPointsPlaceholder": "e.g.,\nEmergency stop button - Front panel\nSafety guard - Left side\nOperation zone - Center\nControl panel - Right side",
+      "safetyPointsPlaceholder": "e.g., (Markdown supported: **bold**, _italic_, lists)\n- Emergency stop button - Front panel\n- Safety guard - Left side\n- Operation zone - Center",
       "changePhoto": "Change Photo",
       "changeDiagram": "Change Diagram",
       "addPhoto": "Add Photo",
@@ -213,17 +213,17 @@
     },
     "operations": {
       "normalOperation": "Normal Operation Steps:",
-      "normalOperationPlaceholder": "1. Start procedure\n2. Stop procedure\n3. Feeding procedure\n4. Evacuation procedure",
+      "normalOperationPlaceholder": "Markdown supported (**bold**, _italic_, lists):\n1. Start procedure\n2. Stop procedure\n3. Feeding procedure",
       "adjustments": "Adjustment Procedures:",
-      "adjustmentsPlaceholder": "e.g., Blade change, speed settings...",
+      "adjustmentsPlaceholder": "e.g., Blade change, speed settings... (Markdown supported)",
       "maintenance": "First-Level Maintenance:",
-      "maintenancePlaceholder": "Basic maintenance tasks operator can perform..."
+      "maintenancePlaceholder": "Basic maintenance tasks operator can perform... (Markdown supported)"
     },
     "risks": {
       "identifiedRisks": "Identified Risks:",
       "residualRisks": "Residual Risks:",
       "addRisk": "Add Risk",
-      "riskPlaceholder": "Describe the risk...",
+      "riskPlaceholder": "Describe the risk... (Markdown supported: **bold**, _italic_, lists)",
       "riskTypes": {
         "cuts": "Cuts",
         "crushing": "Crushing",
@@ -239,23 +239,23 @@
     },
     "prevention": {
       "instructions": "Safety Instructions:",
-      "instructionsPlaceholder": "Safety procedures to follow...",
+      "instructionsPlaceholder": "Safety procedures to follow... (Markdown supported: **bold**, _italic_, lists)",
       "toDo": "To Do:",
-      "toDoPlaceholder": "Required safety actions...",
+      "toDoPlaceholder": "Required safety actions... (Markdown supported: **bold**, _italic_, lists)",
       "toAvoid": "To Avoid:",
-      "toAvoidPlaceholder": "Actions to avoid..."
+      "toAvoidPlaceholder": "Actions to avoid... (Markdown supported: **bold**, _italic_, lists)"
     },
     "qualification": {
       "authorizedPersonnel": "Authorized Personnel:",
-      "authorizedPersonnelPlaceholder": "e.g., Certified machine operators, maintenance staff",
+      "authorizedPersonnelPlaceholder": "e.g., Certified machine operators, maintenance staff (Markdown supported)",
       "requiredTraining": "Required Training:",
-      "requiredTrainingPlaceholder": "e.g., Machine safety training, hazard awareness course",
+      "requiredTrainingPlaceholder": "e.g., Machine safety training, hazard awareness course (Markdown supported)",
       "certifications": "Required Certifications:",
-      "certificationsPlaceholder": "e.g., Operator certification, forklift license"
+      "certificationsPlaceholder": "e.g., Operator certification, forklift license (Markdown supported)"
     },
     "emergency": {
       "emergencyStop": "Emergency Stop Procedure:",
-      "emergencyStopPlaceholder": "How to perform emergency stop...",
+      "emergencyStopPlaceholder": "How to perform emergency stop... (Markdown supported: **bold**, _italic_, lists)",
       "firstAid": "First Aid Contact:",
       "firstAidPlaceholder": "Extension or phone number",
       "fireBrigade": "Fire Brigade:",
@@ -263,7 +263,7 @@
       "samu": "SAMU/Ambulance:",
       "samuPlaceholder": "15 (France) or local number",
       "internalEscalation": "Internal Escalation:",
-      "internalEscalationPlaceholder": "Supervisor, safety manager contacts..."
+      "internalEscalationPlaceholder": "Supervisor, safety manager contacts... (Markdown supported)"
     },
     "pdf": {
       "title": "Machine Specification Sheet",

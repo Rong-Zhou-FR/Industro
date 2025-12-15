@@ -109,6 +109,93 @@ resources/             # Additional resources
 - Provide PDF export where applicable (using jspdf)
 - Handle file reading with proper error handling
 
+## Markdown Support
+
+### Implementation Guidelines
+
+1. **All text input fields should accept markdown** and be rendered with `marked`
+2. **Placeholder texts must indicate markdown support** clearly
+   - Examples: "Enter text (Markdown supported)", "Description (supports **bold**, _italic_, lists)"
+3. **Markdown preview** should be displayed below the input field when content exists
+4. **Security configuration** for marked:
+   ```typescript
+   import { marked } from 'marked'
+   
+   marked.setOptions({
+     breaks: true,
+     gfm: true
+   })
+   marked.use({
+     useNewRenderer: true,
+     renderer: {
+       html() {
+         return ''  // Strip HTML tags for security
+       }
+     }
+   })
+   ```
+5. **Add markdown-support CSS class** to text inputs/textareas that support markdown
+6. **Markdown preview styling**:
+   ```html
+   <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+   <!-- eslint-disable-next-line vue/no-v-html -->
+   <div v-if="previewContent" class="markdown-preview" v-html="previewContent"/>
+   ```
+
+### Markdown-Enabled Fields
+
+The following field types should support markdown:
+- **Description fields** (multi-line text about procedures, tasks, etc.)
+- **Instruction fields** (step-by-step instructions)
+- **Analysis fields** (risk analysis, technical analysis)
+- **Note fields** (additional notes, comments)
+- **Text areas** (general multi-line text input)
+
+Do NOT add markdown support to:
+- Single-line inputs (names, titles, numbers, dates)
+- Dropdown selections
+- Numerical inputs
+- File inputs
+
+## Dropdown Lists with Suggestions
+
+### Implementation Guidelines
+
+1. **All dropdown lists must have a "select from list" popup** similar to `SafetySuggestionInput` component
+2. **Use the SafetySuggestionInput component** for all suggestion-based inputs
+3. **Component interface**:
+   ```vue
+   <SafetySuggestionInput
+     v-model="selectedItems"
+     :suggestions="suggestionsList"
+     :label="t('field.label')"
+     :placeholder="t('field.placeholder')"
+     :group-by="groupingFunction"
+   />
+   ```
+
+### SafetySuggestionInput Component Features
+
+- **Autocomplete search**: Shows suggestions as user types (min 2 characters)
+- **Grouped suggestions**: Items can be grouped by category
+- **Selected items display**: Shows selected items as tags with remove option
+- **Custom entries**: Users can add custom values by pressing Enter
+- **Keyboard navigation**: Support for Enter (add) and Escape (close) keys
+- **Click outside handling**: Closes dropdown when clicking outside
+
+### Standard Dropdown (select element)
+
+For simple dropdowns without search/autocomplete:
+- Use native `<select>` element with proper styling
+- Always include a default "Select..." option with empty value
+- Example:
+  ```vue
+  <select v-model="selectedValue" class="form-control">
+    <option value="">{{ t('common.selectFromList') }}</option>
+    <option value="option1">{{ t('options.option1') }}</option>
+  </select>
+  ```
+
 ## Build and Development Commands
 
 ```bash
@@ -183,7 +270,26 @@ const { t } = useI18n()
     v-model.number="value" 
     type="number" 
     class="form-control"
+    :placeholder="t('form.placeholder')"
   >
+</div>
+```
+
+### Markdown Input Pattern
+
+```vue
+<div class="form-group">
+  <label for="inputId">{{ t('form.label') }}</label>
+  <textarea 
+    id="inputId" 
+    v-model="value" 
+    class="form-control markdown-support"
+    rows="5"
+    :placeholder="t('form.placeholderMarkdown')"
+  />
+  <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+  <!-- eslint-disable-next-line vue/no-v-html -->
+  <div v-if="previewValue" class="markdown-preview" v-html="previewValue"/>
 </div>
 ```
 
@@ -241,3 +347,4 @@ Currently, this project does not have automated tests. When adding tests:
 - [Vue 3 Composition API](https://vuejs.org/guide/extras/composition-api-faq.html)
 - [Vue I18n Documentation](https://vue-i18n.intlify.dev/)
 - [Chart.js Documentation](https://www.chartjs.org/docs/)
+- [Marked Documentation](https://marked.js.org/)

@@ -308,7 +308,6 @@ if (typeof marked !== 'undefined') {
     gfm: true
   })
   marked.use({
-    useNewRenderer: true,
     renderer: {
       html() {
         return ''
