@@ -727,7 +727,6 @@ if (typeof marked !== 'undefined') {
     gfm: true
   })
   marked.use({
-    useNewRenderer: true,
     renderer: {
       html() {
         return ''  // Strip HTML tags for security
@@ -941,7 +940,9 @@ const renderMarkdown = (text: string): string => {
   if (!text?.trim()) return ''
   try {
     return marked.parse(text)
-  } catch {
+  } catch (error) {
+    console.error('Markdown parsing error:', error)
+    // Return the original text if parsing fails
     return text
   }
 }
