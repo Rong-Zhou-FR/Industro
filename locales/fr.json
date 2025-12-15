@@ -88,7 +88,7 @@
       "title": "Titre :",
       "titlePlaceholder": "Titre de l'intervention",
       "description": "Description :",
-      "descriptionPlaceholder": "Description détaillée de l'intervention",
+      "descriptionPlaceholder": "Description détaillée de l'intervention (Markdown supporté : **gras**, _italique_, listes)",
       "date": "Date :",
       "number": "Numéro :",
       "numberPlaceholder": "N° d'intervention",
@@ -99,7 +99,7 @@
       "epiEpc": "EPI/EPC requis :",
       "epiEpcPlaceholder": "Commencer à taper pour voir les suggestions...",
       "riskAnalysisPlaceholder": "Analyse détaillée des risques...\n\nExemple (markdown supporté):\n- **Risque électrique**: Nécessite consignation complète\n- **Mesures préventives**:\n  - Vérifier VAT avant intervention\n  - Porter EPI électrique adapté",
-      "instructionPlaceholder": "Description de l'instruction...",
+      "instructionPlaceholder": "Description de l'instruction... (Markdown supporté : **gras**, _italique_, listes)",
       "designation": "Désignation",
       "designationPlaceholder": "Désignation",
       "quantity": "Nombre",
@@ -168,7 +168,7 @@
       "uploadPhoto": "Télécharger Photo Machine :",
       "uploadDiagram": "Télécharger Schéma (Optionnel) :",
       "safetyPoints": "Points de Sécurité (un par ligne) :",
-      "safetyPointsPlaceholder": "ex. :\nBouton d'arrêt d'urgence - Panneau avant\nProtecteur de sécurité - Côté gauche\nZone d'opération - Centre\nPanneau de contrôle - Côté droit",
+      "safetyPointsPlaceholder": "ex. : (Markdown supporté : **gras**, _italique_, listes)\n- Bouton d'arrêt d'urgence - Panneau avant\n- Protecteur de sécurité - Côté gauche",
       "changePhoto": "Changer la Photo",
       "changeDiagram": "Changer le Schéma",
       "addPhoto": "Ajouter Photo",
@@ -186,9 +186,9 @@
       "noiseLevel": "Niveau Sonore :",
       "noiseLevelPlaceholder": "ex. : 85 dB(A)",
       "operatingLimits": "Limites d'Exploitation :",
-      "operatingLimitsPlaceholder": "Matériaux autorisés, capacité max, etc.",
+      "operatingLimitsPlaceholder": "Matériaux autorisés, capacité max, etc. (Markdown supporté : **gras**, _italique_, listes)",
       "additionalSpecs": "Spécifications Supplémentaires :",
-      "additionalSpecsPlaceholder": "Autres détails techniques..."
+      "additionalSpecsPlaceholder": "Autres détails techniques... (Markdown supporté : **gras**, _italique_, listes)"
     },
     "safety": {
       "requiredPPE": "EPI Obligatoires :",
@@ -213,17 +213,17 @@
     },
     "operations": {
       "normalOperation": "Étapes d'Opération Normale :",
-      "normalOperationPlaceholder": "1. Procédure de démarrage\n2. Procédure d'arrêt\n3. Procédure d'alimentation\n4. Procédure d'évacuation",
+      "normalOperationPlaceholder": "Markdown supporté (**gras**, _italique_, listes) :\n1. Procédure de démarrage\n2. Procédure d'arrêt\n3. Procédure d'alimentation",
       "adjustments": "Procédures de Réglage :",
-      "adjustmentsPlaceholder": "ex. : Changement de lame, réglages de vitesse...",
+      "adjustmentsPlaceholder": "ex. : Changement de lame, réglages de vitesse... (Markdown supporté)",
       "maintenance": "Maintenance de Premier Niveau :",
-      "maintenancePlaceholder": "Tâches de maintenance de base que l'opérateur peut effectuer..."
+      "maintenancePlaceholder": "Tâches de maintenance de base que l'opérateur peut effectuer... (Markdown supporté)"
     },
     "risks": {
       "identifiedRisks": "Risques Identifiés :",
       "residualRisks": "Risques Résiduels :",
       "addRisk": "Ajouter Risque",
-      "riskPlaceholder": "Décrire le risque...",
+      "riskPlaceholder": "Décrire le risque... (Markdown supporté : **gras**, _italique_, listes)",
       "riskTypes": {
         "cuts": "Coupures",
         "crushing": "Écrasement",
@@ -239,23 +239,23 @@
     },
     "prevention": {
       "instructions": "Consignes de Sécurité :",
-      "instructionsPlaceholder": "Procédures de sécurité à suivre...",
+      "instructionsPlaceholder": "Procédures de sécurité à suivre... (Markdown supporté : **gras**, _italique_, listes)",
       "toDo": "À Faire :",
-      "toDoPlaceholder": "Actions de sécurité requises...",
+      "toDoPlaceholder": "Actions de sécurité requises... (Markdown supporté : **gras**, _italique_, listes)",
       "toAvoid": "À Éviter :",
-      "toAvoidPlaceholder": "Actions à éviter..."
+      "toAvoidPlaceholder": "Actions à éviter... (Markdown supporté : **gras**, _italique_, listes)"
     },
     "qualification": {
       "authorizedPersonnel": "Personnel Autorisé :",
-      "authorizedPersonnelPlaceholder": "ex. : Opérateurs certifiés, personnel de maintenance",
+      "authorizedPersonnelPlaceholder": "ex. : Opérateurs certifiés, personnel de maintenance (Markdown supporté)",
       "requiredTraining": "Formation Requise :",
-      "requiredTrainingPlaceholder": "ex. : Formation sécurité machine, sensibilisation aux dangers",
+      "requiredTrainingPlaceholder": "ex. : Formation sécurité machine, sensibilisation aux dangers (Markdown supporté)",
       "certifications": "Certifications Requises :",
-      "certificationsPlaceholder": "ex. : Certification opérateur, permis chariot élévateur"
+      "certificationsPlaceholder": "ex. : Certification opérateur, permis chariot élévateur (Markdown supporté)"
     },
     "emergency": {
       "emergencyStop": "Procédure d'Arrêt d'Urgence :",
-      "emergencyStopPlaceholder": "Comment effectuer l'arrêt d'urgence...",
+      "emergencyStopPlaceholder": "Comment effectuer l'arrêt d'urgence... (Markdown supporté : **gras**, _italique_, listes)",
       "firstAid": "Contact Premiers Secours :",
       "firstAidPlaceholder": "Poste ou numéro de téléphone",
       "fireBrigade": "Pompiers :",
@@ -263,7 +263,7 @@
       "samu": "SAMU/Ambulance :",
       "samuPlaceholder": "15 (France) ou numéro local",
       "internalEscalation": "Escalade Interne :",
-      "internalEscalationPlaceholder": "Contacts superviseur, responsable sécurité..."
+      "internalEscalationPlaceholder": "Contacts superviseur, responsable sécurité... (Markdown supporté)"
     },
     "pdf": {
       "title": "Fiche Technique Machine",
