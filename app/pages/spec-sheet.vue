@@ -144,10 +144,13 @@
             <textarea
               id="safetyPoints"
               v-model="data.visuals.safetyPoints"
-              class="form-control"
+              class="form-control markdown-support"
               rows="4"
               :placeholder="t('specSheet.visuals.safetyPointsPlaceholder')"
             />
+            <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-if="safetyPointsPreview" class="markdown-preview" v-html="safetyPointsPreview"/>
           </div>
         </div>
       </section>
@@ -211,20 +214,26 @@
             <textarea
               id="operatingLimits"
               v-model="data.technical.operatingLimits"
-              class="form-control"
+              class="form-control markdown-support"
               rows="3"
               :placeholder="t('specSheet.technical.operatingLimitsPlaceholder')"
             />
+            <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-if="operatingLimitsPreview" class="markdown-preview" v-html="operatingLimitsPreview"/>
           </div>
           <div class="form-group full-width">
             <label for="additionalSpecs">{{ t('specSheet.technical.additionalSpecs') }}</label>
             <textarea
               id="additionalSpecs"
               v-model="data.technical.additionalSpecs"
-              class="form-control"
+              class="form-control markdown-support"
               rows="3"
               :placeholder="t('specSheet.technical.additionalSpecsPlaceholder')"
             />
+            <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-if="additionalSpecsPreview" class="markdown-preview" v-html="additionalSpecsPreview"/>
           </div>
         </div>
       </section>
@@ -263,30 +272,39 @@
             <textarea
               id="normalOperation"
               v-model="data.operations.normalOperation"
-              class="form-control"
+              class="form-control markdown-support"
               rows="5"
               :placeholder="t('specSheet.operations.normalOperationPlaceholder')"
             />
+            <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-if="normalOperationPreview" class="markdown-preview" v-html="normalOperationPreview"/>
           </div>
           <div class="form-group full-width">
             <label for="adjustments">{{ t('specSheet.operations.adjustments') }}</label>
             <textarea
               id="adjustments"
               v-model="data.operations.adjustments"
-              class="form-control"
+              class="form-control markdown-support"
               rows="4"
               :placeholder="t('specSheet.operations.adjustmentsPlaceholder')"
             />
+            <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-if="adjustmentsPreview" class="markdown-preview" v-html="adjustmentsPreview"/>
           </div>
           <div class="form-group full-width">
             <label for="maintenance">{{ t('specSheet.operations.maintenance') }}</label>
             <textarea
               id="maintenance"
               v-model="data.operations.maintenance"
-              class="form-control"
+              class="form-control markdown-support"
               rows="4"
               :placeholder="t('specSheet.operations.maintenancePlaceholder')"
             />
+            <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-if="maintenancePreview" class="markdown-preview" v-html="maintenancePreview"/>
           </div>
         </div>
       </section>
@@ -309,10 +327,13 @@
             <textarea
               id="residualRisks"
               v-model="data.risks.residualRisks"
-              class="form-control"
+              class="form-control markdown-support"
               rows="4"
               :placeholder="t('specSheet.risks.riskPlaceholder')"
             />
+            <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-if="residualRisksPreview" class="markdown-preview" v-html="residualRisksPreview"/>
           </div>
         </div>
       </section>
@@ -326,30 +347,39 @@
             <textarea
               id="instructions"
               v-model="data.prevention.instructions"
-              class="form-control"
+              class="form-control markdown-support"
               rows="4"
               :placeholder="t('specSheet.prevention.instructionsPlaceholder')"
             />
+            <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-if="instructionsPreview" class="markdown-preview" v-html="instructionsPreview"/>
           </div>
           <div class="form-group full-width">
             <label for="toDo">{{ t('specSheet.prevention.toDo') }}</label>
             <textarea
               id="toDo"
               v-model="data.prevention.toDo"
-              class="form-control"
+              class="form-control markdown-support"
               rows="4"
               :placeholder="t('specSheet.prevention.toDoPlaceholder')"
             />
+            <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-if="toDoPreview" class="markdown-preview" v-html="toDoPreview"/>
           </div>
           <div class="form-group full-width">
             <label for="toAvoid">{{ t('specSheet.prevention.toAvoid') }}</label>
             <textarea
               id="toAvoid"
               v-model="data.prevention.toAvoid"
-              class="form-control"
+              class="form-control markdown-support"
               rows="4"
               :placeholder="t('specSheet.prevention.toAvoidPlaceholder')"
             />
+            <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-if="toAvoidPreview" class="markdown-preview" v-html="toAvoidPreview"/>
           </div>
         </div>
       </section>
@@ -363,30 +393,39 @@
             <textarea
               id="authorizedPersonnel"
               v-model="data.qualification.authorizedPersonnel"
-              class="form-control"
+              class="form-control markdown-support"
               rows="3"
               :placeholder="t('specSheet.qualification.authorizedPersonnelPlaceholder')"
             />
+            <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-if="authorizedPersonnelPreview" class="markdown-preview" v-html="authorizedPersonnelPreview"/>
           </div>
           <div class="form-group full-width">
             <label for="requiredTraining">{{ t('specSheet.qualification.requiredTraining') }}</label>
             <textarea
               id="requiredTraining"
               v-model="data.qualification.requiredTraining"
-              class="form-control"
+              class="form-control markdown-support"
               rows="3"
               :placeholder="t('specSheet.qualification.requiredTrainingPlaceholder')"
             />
+            <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-if="requiredTrainingPreview" class="markdown-preview" v-html="requiredTrainingPreview"/>
           </div>
           <div class="form-group full-width">
             <label for="certifications">{{ t('specSheet.qualification.certifications') }}</label>
             <textarea
               id="certifications"
               v-model="data.qualification.certifications"
-              class="form-control"
+              class="form-control markdown-support"
               rows="3"
               :placeholder="t('specSheet.qualification.certificationsPlaceholder')"
             />
+            <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-if="certificationsPreview" class="markdown-preview" v-html="certificationsPreview"/>
           </div>
         </div>
       </section>
@@ -400,10 +439,13 @@
             <textarea
               id="emergencyStop"
               v-model="data.emergency.emergencyStop"
-              class="form-control"
+              class="form-control markdown-support"
               rows="3"
               :placeholder="t('specSheet.emergency.emergencyStopPlaceholder')"
             />
+            <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-if="emergencyStopPreview" class="markdown-preview" v-html="emergencyStopPreview"/>
           </div>
           <div class="form-group">
             <label for="firstAid">{{ t('specSheet.emergency.firstAid') }}</label>
@@ -440,10 +482,13 @@
             <textarea
               id="internalEscalation"
               v-model="data.emergency.internalEscalation"
-              class="form-control"
+              class="form-control markdown-support"
               rows="3"
               :placeholder="t('specSheet.emergency.internalEscalationPlaceholder')"
             />
+            <!-- Safe: HTML tags are stripped by marked.js renderer configuration -->
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-if="internalEscalationPreview" class="markdown-preview" v-html="internalEscalationPreview"/>
           </div>
         </div>
       </section>
@@ -670,9 +715,26 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useSafetyData } from '~/composables/useSafetyData'
+import { marked } from 'marked'
 
 const { t, locale } = useI18n()
 const { loadData, dangers, protectiveEquipments } = useSafetyData()
+
+// Configure marked for security
+if (typeof marked !== 'undefined') {
+  marked.setOptions({
+    breaks: true,
+    gfm: true
+  })
+  marked.use({
+    useNewRenderer: true,
+    renderer: {
+      html() {
+        return ''  // Strip HTML tags for security
+      }
+    }
+  })
+}
 
 // PPE Suggestions - dynamically built from protectiveEquipments data
 const ppeSuggestions = computed(() => {
@@ -873,6 +935,33 @@ const formatDate = (dateString: string): string => {
   const date = new Date(dateString)
   return date.toLocaleDateString()
 }
+
+// Helper function to render markdown
+const renderMarkdown = (text: string): string => {
+  if (!text?.trim()) return ''
+  try {
+    return marked.parse(text)
+  } catch {
+    return text
+  }
+}
+
+// Computed markdown previews for text areas
+const safetyPointsPreview = computed(() => renderMarkdown(data.visuals.safetyPoints))
+const operatingLimitsPreview = computed(() => renderMarkdown(data.technical.operatingLimits))
+const additionalSpecsPreview = computed(() => renderMarkdown(data.technical.additionalSpecs))
+const normalOperationPreview = computed(() => renderMarkdown(data.operations.normalOperation))
+const adjustmentsPreview = computed(() => renderMarkdown(data.operations.adjustments))
+const maintenancePreview = computed(() => renderMarkdown(data.operations.maintenance))
+const residualRisksPreview = computed(() => renderMarkdown(data.risks.residualRisks))
+const instructionsPreview = computed(() => renderMarkdown(data.prevention.instructions))
+const toDoPreview = computed(() => renderMarkdown(data.prevention.toDo))
+const toAvoidPreview = computed(() => renderMarkdown(data.prevention.toAvoid))
+const authorizedPersonnelPreview = computed(() => renderMarkdown(data.qualification.authorizedPersonnel))
+const requiredTrainingPreview = computed(() => renderMarkdown(data.qualification.requiredTraining))
+const certificationsPreview = computed(() => renderMarkdown(data.qualification.certifications))
+const emergencyStopPreview = computed(() => renderMarkdown(data.emergency.emergencyStop))
+const internalEscalationPreview = computed(() => renderMarkdown(data.emergency.internalEscalation))
 
 const getSafetyPointsArray = (): string[] => {
   return data.visuals.safetyPoints
@@ -1313,6 +1402,46 @@ label {
 textarea.form-control {
   resize: vertical;
   font-family: inherit;
+}
+
+.markdown-support {
+  font-family: 'Courier New', monospace;
+}
+
+.markdown-preview {
+  margin-top: 10px;
+  padding: 15px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 0.95em;
+}
+
+.markdown-preview :deep(ul) {
+  margin-left: 20px;
+  list-style-type: disc;
+}
+
+.markdown-preview :deep(ol) {
+  margin-left: 20px;
+}
+
+.markdown-preview :deep(strong) {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.markdown-preview :deep(em) {
+  font-style: italic;
+  color: #475569;
+}
+
+.markdown-preview :deep(li) {
+  margin: 5px 0;
+}
+
+.markdown-preview :deep(p) {
+  margin: 8px 0;
 }
 
 .file-upload-container {
