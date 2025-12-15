@@ -718,7 +718,7 @@ import { useSafetyData } from '~/composables/useSafetyData'
 import { marked } from 'marked'
 
 const { t, locale } = useI18n()
-const { loadData, dangers, protectiveEquipments } = useSafetyData()
+const { loadData, dangers, protectiveEquipments, pictograms } = useSafetyData()
 
 // Configure marked for security
 if (typeof marked !== 'undefined') {
