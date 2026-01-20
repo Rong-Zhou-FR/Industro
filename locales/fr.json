@@ -276,7 +276,8 @@
       "fillMachineName": "Veuillez saisir le nom de la machine",
       "selectJSONFile": "Veuillez sélectionner un fichier JSON",
       "parsingError": "Erreur lors de l'analyse du fichier JSON :",
-      "invalidFormat": "Format de fichier invalide"
+      "invalidFormat": "Format de fichier invalide",
+      "pdfGenerationError": "Erreur lors de la génération du PDF. Veuillez réessayer."
     }
   }
 }
