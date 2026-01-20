@@ -1192,25 +1192,25 @@ const exportToPDF = async (): Promise<void> => {
     const contentWidth = pageWidth - 2 * margin
     const pictoSize = 8 // Size of pictogram in mm
 
-    // Use Times font for better character support
-    pdf.setFont('times', 'normal')
+    // Use Helvetica font for better character support with proper encoding
+    pdf.setFont('helvetica', 'normal')
 
     // Title
     pdf.setFontSize(20)
-    pdf.setFont('times', 'bold')
+    pdf.setFont('helvetica', 'bold')
     const titleText = t('specSheet.pdf.title')
     pdf.text(titleText, pageWidth / 2, yPosition, { align: 'center' })
     yPosition += 10
 
     pdf.setFontSize(12)
-    pdf.setFont('times', 'italic')
+    pdf.setFont('helvetica', 'italic')
     const subtitleText = t('specSheet.pdf.subtitle')
     pdf.text(subtitleText, pageWidth / 2, yPosition, { align: 'center' })
     yPosition += 15
 
     // Version and date
     pdf.setFontSize(10)
-    pdf.setFont('times', 'normal')
+    pdf.setFont('helvetica', 'normal')
     pdf.text(`${t('specSheet.pdf.version')} ${data.identification.sheetVersion}`, margin, yPosition)
     pdf.text(`${t('specSheet.pdf.date')} ${formatDate(data.identification.sheetDate)}`, 150, yPosition)
     yPosition += 10
@@ -1236,13 +1236,13 @@ const exportToPDF = async (): Promise<void> => {
         yPosition = 20
       }
       pdf.setFontSize(14)
-      pdf.setFont('times', 'bold')
+      pdf.setFont('helvetica', 'bold')
       pdf.setTextColor(0, 51, 102) // Dark blue
       pdf.text(title, margin, yPosition)
       yPosition += 7
 
       pdf.setFontSize(10)
-      pdf.setFont('times', 'normal')
+      pdf.setFont('helvetica', 'normal')
       pdf.setTextColor(0, 0, 0)
       content.forEach(line => {
         if (yPosition > 270) {
@@ -1259,13 +1259,13 @@ const exportToPDF = async (): Promise<void> => {
 
     // 1. Identification
     pdf.setFontSize(14)
-    pdf.setFont('times', 'bold')
+    pdf.setFont('helvetica', 'bold')
     pdf.setTextColor(0, 51, 102)
     pdf.text(t('specSheet.sections.identification'), margin, yPosition)
     yPosition += 8
 
     pdf.setFontSize(10)
-    pdf.setFont('times', 'normal')
+    pdf.setFont('helvetica', 'normal')
     pdf.setTextColor(0, 0, 0)
     
     pdf.text(`${t('specSheet.identification.machineName')}: ${data.identification.machineName}`, margin, yPosition)
@@ -1305,7 +1305,7 @@ const exportToPDF = async (): Promise<void> => {
       }
 
       pdf.setFontSize(14)
-      pdf.setFont('times', 'bold')
+      pdf.setFont('helvetica', 'bold')
       pdf.setTextColor(0, 51, 102)
       pdf.text(t('specSheet.sections.safety'), margin, yPosition)
       yPosition += 8
@@ -1315,10 +1315,10 @@ const exportToPDF = async (): Promise<void> => {
 
       // Required PPE with pictograms
       if (data.safety.requiredPPE.length > 0) {
-        pdf.setFont('times', 'bold')
+        pdf.setFont('helvetica', 'bold')
         pdf.text(t('specSheet.safety.requiredPPE'), margin, yPosition)
         yPosition += 6
-        pdf.setFont('times', 'normal')
+        pdf.setFont('helvetica', 'normal')
 
         data.safety.requiredPPE.forEach((ppe) => {
           const ppeLabel = getPPELabel(ppe)
@@ -1346,10 +1346,10 @@ const exportToPDF = async (): Promise<void> => {
 
       // Prohibited PPE with pictograms
       if (data.safety.prohibitedPPE.length > 0) {
-        pdf.setFont('times', 'bold')
+        pdf.setFont('helvetica', 'bold')
         pdf.text(t('specSheet.safety.prohibitedPPE'), margin, yPosition)
         yPosition += 6
-        pdf.setFont('times', 'normal')
+        pdf.setFont('helvetica', 'normal')
 
         data.safety.prohibitedPPE.forEach((ppe) => {
           const ppeLabel = getPPELabel(ppe)
@@ -1396,7 +1396,7 @@ const exportToPDF = async (): Promise<void> => {
       }
 
       pdf.setFontSize(14)
-      pdf.setFont('times', 'bold')
+      pdf.setFont('helvetica', 'bold')
       pdf.setTextColor(153, 0, 0) // Dark red
       pdf.text(t('specSheet.sections.risks'), margin, yPosition)
       yPosition += 8
@@ -1406,10 +1406,10 @@ const exportToPDF = async (): Promise<void> => {
 
       // Identified risks with pictograms
       if (data.risks.identifiedRisks.length > 0) {
-        pdf.setFont('times', 'bold')
+        pdf.setFont('helvetica', 'bold')
         pdf.text(t('specSheet.risks.identifiedRisks'), margin, yPosition)
         yPosition += 6
-        pdf.setFont('times', 'normal')
+        pdf.setFont('helvetica', 'normal')
 
         data.risks.identifiedRisks.forEach((risk) => {
           const riskLabel = getRiskLabel(risk)
@@ -1436,10 +1436,10 @@ const exportToPDF = async (): Promise<void> => {
       }
 
       if (data.risks.residualRisks) {
-        pdf.setFont('times', 'bold')
+        pdf.setFont('helvetica', 'bold')
         pdf.text(`${t('specSheet.risks.residualRisks')}:`, margin, yPosition)
         yPosition += 6
-        pdf.setFont('times', 'normal')
+        pdf.setFont('helvetica', 'normal')
         const cleanedRisks = stripMarkdown(data.risks.residualRisks)
         const riskLines = pdf.splitTextToSize(cleanedRisks, contentWidth - 10)
         pdf.text(riskLines, margin + 5, yPosition)
@@ -1553,7 +1553,7 @@ onMounted(() => {
 .spec-sheet-page {
   min-height: 100vh;
   padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
 }
 
 .container {
@@ -1569,18 +1569,20 @@ header {
 .back-btn {
   display: inline-block;
   padding: 10px 20px;
-  background: white;
-  color: #667eea;
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text-primary);
   text-decoration: none;
   border-radius: 5px;
   margin-bottom: 20px;
   font-weight: 600;
   transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .back-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 h1 {
@@ -1645,19 +1647,20 @@ h1 {
 }
 
 .card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 15px;
   padding: 30px;
   margin-bottom: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 h2 {
-  color: #667eea;
+  color: var(--text-primary);
   font-size: 1.8em;
   margin-bottom: 20px;
   padding-bottom: 10px;
-  border-bottom: 2px solid #e0f2fe;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .form-grid {
@@ -1678,20 +1681,26 @@ h2 {
 label {
   font-weight: 600;
   margin-bottom: 8px;
-  color: #334155;
+  color: var(--text-primary);
 }
 
 .form-control {
   padding: 12px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   font-size: 1em;
   transition: border-color 0.3s ease;
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text-primary);
 }
 
 .form-control:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--primary-color);
+}
+
+.form-control::placeholder {
+  color: var(--text-light);
 }
 
 textarea.form-control {
@@ -1706,10 +1715,11 @@ textarea.form-control {
 .markdown-preview {
   margin-top: 10px;
   padding: 15px;
-  background: #f8fafc;
+  background: rgba(0, 0, 0, 0.3);
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 0.95em;
+  color: var(--text-secondary);
 }
 
 .markdown-preview :deep(ul) {
@@ -1723,12 +1733,12 @@ textarea.form-control {
 
 .markdown-preview :deep(strong) {
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .markdown-preview :deep(em) {
   font-style: italic;
-  color: #475569;
+  color: var(--text-secondary);
 }
 
 .markdown-preview :deep(li) {
@@ -1747,9 +1757,10 @@ textarea.form-control {
 
 .image-preview {
   margin-top: 10px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .image-preview img {
@@ -1761,8 +1772,9 @@ textarea.form-control {
 .ppe-selector,
 .risk-selector {
   padding: 15px;
-  background: #f8fafc;
+  background: rgba(0, 0, 0, 0.3);
   border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .ppe-checkboxes,
@@ -1898,17 +1910,18 @@ textarea.form-control {
   flex-direction: column;
   gap: 4px;
   padding: 10px;
-  background: #f8fafc;
+  background: rgba(0, 0, 0, 0.3);
   border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .info-item strong {
-  color: #334155;
+  color: var(--text-secondary);
   font-size: 12px;
 }
 
 .info-item span {
-  color: #1e293b;
+  color: var(--text-primary);
   font-size: 14px;
 }
 

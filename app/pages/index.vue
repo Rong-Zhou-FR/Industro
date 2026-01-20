@@ -88,27 +88,28 @@ onUnmounted(() => {
 }
 
 .author {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 1.2em;
   margin-bottom: 30px;
   font-style: italic;
 }
 
 .description {
-  color: #666;
+  color: var(--text-secondary);
   margin: 20px 0;
   line-height: 1.6;
 }
 
 .datetime {
-  background: #f8f9fa;
+  background: rgba(0, 0, 0, 0.3);
   border-radius: 10px;
   padding: 20px;
   margin: 30px 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .datetime p {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 1.1em;
   margin: 5px 0;
 }
@@ -116,7 +117,7 @@ onUnmounted(() => {
 .clock {
   font-size: 2em !important;
   font-weight: bold;
-  color: #667eea !important;
+  color: var(--text-primary) !important;
   margin: 10px 0;
 }
 
