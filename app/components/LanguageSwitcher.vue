@@ -18,7 +18,8 @@ const { locale } = useI18n()
 
 const availableLocales = [
   { code: 'en', name: 'English' },
-  { code: 'fr', name: 'Français' }
+  { code: 'fr', name: 'Français' },
+  { code: 'eo', name: 'Esperanto' }
 ] as const
 
 const currentLocale = computed(() => locale.value)
@@ -42,9 +43,9 @@ const switchLanguage = (code: string): void => {
 
 .lang-btn {
   padding: 8px 16px;
-  border: 2px solid #667eea;
-  background: white;
-  color: #667eea;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text-primary);
   border-radius: 5px;
   cursor: pointer;
   font-weight: 600;
@@ -52,13 +53,14 @@ const switchLanguage = (code: string): void => {
 }
 
 .lang-btn:hover {
-  background: #f0f4ff;
+  background: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
 }
 
 .lang-btn.active {
-  background: #667eea;
+  background: var(--primary-color);
   color: white;
+  border-color: var(--primary-color);
 }
 </style>
