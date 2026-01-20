@@ -1274,10 +1274,11 @@ onUnmounted(() => {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  background: #f0f9ff;
+  background: var(--bg-card);
   border-radius: 20px;
   padding: 30px;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Header */
@@ -1285,10 +1286,10 @@ header {
   text-align: center;
   margin-bottom: 40px;
   padding: 30px;
-  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  background: linear-gradient(135deg, #1e3a8a, #4c1d95);
   border-radius: 15px;
   color: white;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
 }
 
 header h1 {
@@ -1305,39 +1306,41 @@ header h1 {
 
 .back-btn {
   display: inline-block;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.3);
   color: white;
   padding: 8px 16px;
   border-radius: 5px;
   text-decoration: none;
   margin-bottom: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .back-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* Cards */
 .card {
-  background: #ffffff;
+  background: rgba(0, 0, 0, 0.3);
   border-radius: 15px;
   padding: 25px;
   margin-bottom: 25px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  border-left: 5px solid #2563eb;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  border-left: 5px solid var(--primary-color);
   transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
 }
 
 .card h2 {
-  color: #2563eb;
+  color: var(--text-primary);
   margin-bottom: 20px;
   font-size: 1.8em;
-  border-bottom: 2px solid #e0f2fe;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
   padding-bottom: 10px;
 }
 
@@ -1351,12 +1354,12 @@ header h1 {
 }
 
 .warning-section {
-  border-left-color: #ef4444;
-  background: linear-gradient(to right, #fff5f5, #ffffff);
+  border-left-color: #dc2626;
+  background: linear-gradient(to right, rgba(220, 38, 38, 0.1), rgba(0, 0, 0, 0.3));
 }
 
 .warning-section h2 {
-  color: #ef4444;
+  color: #fca5a5;
 }
 
 .material-section {
@@ -1404,7 +1407,7 @@ header h1 {
 .form-group label {
   font-weight: 600;
   margin-bottom: 8px;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 /* PPE/CPE Input Container */
@@ -1418,22 +1421,22 @@ header h1 {
   top: 100%;
   left: 0;
   right: 0;
-  background: white;
-  border: 2px solid #e0f2fe;
+  background: var(--bg-card);
+  border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   max-height: 400px;
   overflow-y: auto;
   z-index: 1000;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
   margin-top: 5px;
 }
 
 .suggestion-category {
   padding: 10px 15px;
-  background: #e0f2fe;
+  background: rgba(30, 58, 138, 0.3);
   font-weight: 600;
-  color: #2563eb;
-  border-bottom: 1px solid #cbd5e1;
+  color: var(--text-primary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .suggestion-item {
@@ -1442,12 +1445,13 @@ header h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   transition: background-color 0.2s;
+  color: var(--text-secondary);
 }
 
 .suggestion-item:hover {
-  background: #e0f2fe;
+  background: rgba(30, 58, 138, 0.2);
 }
 
 .suggestion-badges {

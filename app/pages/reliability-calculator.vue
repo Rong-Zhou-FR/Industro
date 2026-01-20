@@ -527,23 +527,25 @@ const importJSON = () => {
 
 .back-btn {
   display: inline-block;
-  background: #6c757d;
-  color: white;
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text-primary);
   padding: 10px 20px;
   border-radius: 5px;
   text-decoration: none;
   margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .back-btn:hover {
-  background: #5a6268;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .form-section {
-  background: #f8f9fa;
+  background: rgba(0, 0, 0, 0.3);
   padding: 30px;
   border-radius: 10px;
   margin-bottom: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .form-section .btn {
@@ -554,8 +556,9 @@ const importJSON = () => {
 .import-section {
   margin-top: 20px;
   padding: 20px;
-  background: #fff3cd;
+  background: rgba(217, 119, 6, 0.2);
   border-radius: 10px;
+  border: 1px solid rgba(217, 119, 6, 0.4);
 }
 
 .import-section h3 {
@@ -569,8 +572,9 @@ const importJSON = () => {
 .results {
   margin-top: 30px;
   padding: 30px;
-  background: #e9ecef;
+  background: rgba(0, 0, 0, 0.3);
   border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .result-item {
@@ -580,27 +584,29 @@ const importJSON = () => {
 
 .result-label {
   font-weight: 600;
-  color: #667eea;
+  color: var(--text-primary);
 }
 
 .equation-display {
   font-size: 1.2em;
   padding: 10px;
-  background: #f0f0f0;
+  background: rgba(0, 0, 0, 0.4);
   border-radius: 5px;
   margin: 10px 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .chart-options {
-  background: #f8f9fa;
+  background: rgba(0, 0, 0, 0.3);
   padding: 20px;
   border-radius: 10px;
   margin-top: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .chart-options h3 {
   margin-bottom: 15px;
-  color: #667eea;
+  color: var(--text-primary);
 }
 
 .chart-options h4 {
